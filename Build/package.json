@@ -1,33 +1,38 @@
 {
-  "name": "web-template",
+  "name": "satori",
   "version": "0.1.0",
-  "description": "My typical web dev starter project.",
-  "main": "index.js",
+  "description": "Event-centric observability layer for complex apps.",
+  "main": "./dist/satori.cjs.js",
+  "module": "./dist/satori.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/satori.es.js",
+      "require": "./dist/satori.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:single": "cross-env SINGLE_FILE=true npm run build",
-    "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NellowTCS/Web-Template.git"
+    "url": "git+https://github.com/NellowTCS/Satori.git"
   },
   "author": "NellowTCS",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/NellowTCS/Web-Template/issues"
+    "url": "https://github.com/NellowTCS/Satori/issues"
   },
-  "homepage": "https://github.com/NellowTCS/Web-Template#readme",
-  "dependencies": {
-    "vite": "^7.1.3"
-  },
+  "homepage": "https://github.com/NellowTCS/Satori#readme",
   "devDependencies": {
-    "@vite-pwa/assets-generator": "^1.0.1",
-    "cross-env": "^10.1.0",
-    "sharp": "^0.34.4",
-    "vite-plugin-pwa": "^1.0.3",
-    "vite-plugin-singlefile": "^2.3.0"
+    "@types/node": "^25.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.3"
   }
 }

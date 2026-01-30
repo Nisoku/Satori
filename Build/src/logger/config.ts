@@ -1,0 +1,1 @@
+export { DEFAULT_CONFIG, SatoriConfig } from '../core/config.js';

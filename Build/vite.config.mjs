@@ -1,10 +1,15 @@
 import { defineConfig } from "vite";
+import { resolve } from "path";
 
-export default defineConfig(({ mode }) => {
-
+export default defineConfig(() => {
   return {
-    base: "./",
     build: {
+      lib: {
+        entry: resolve(__dirname, 'src/index.ts'),
+        name: 'Satori',
+        fileName: 'satori',
+        formats: ['es', 'cjs']
+      },
       sourcemap: true,
       outDir: './dist',
       emptyOutDir: true,
