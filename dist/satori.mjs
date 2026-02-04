@@ -65,7 +65,7 @@ class M {
     this.config = { ...this.config, ...e };
   }
 }
-function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
+function g(s, e, t = /* @__PURE__ */ new WeakMap()) {
   if (s === e) return !0;
   if (typeof s == "number" && typeof e == "number")
     return Number.isNaN(s) && Number.isNaN(e) ? !0 : s === e;
@@ -83,7 +83,7 @@ function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
   if (s instanceof Map && e instanceof Map) {
     if (s.size !== e.size) return !1;
     for (const [c, l] of s)
-      if (!e.has(c) || !m(l, e.get(c), t)) return !1;
+      if (!e.has(c) || !g(l, e.get(c), t)) return !1;
     return !0;
   }
   if (s instanceof Map || e instanceof Map) return !1;
@@ -93,7 +93,7 @@ function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
     for (const u of c) {
       let d = !1;
       for (const h of l)
-        if (m(u, h, t)) {
+        if (g(u, h, t)) {
           d = !0;
           break;
         }
@@ -110,19 +110,19 @@ function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
       if (!l.includes(h)) return !1;
     for (let h = 0; h < s.length; h++) {
       const T = Object.prototype.hasOwnProperty.call(s, h), $ = Object.prototype.hasOwnProperty.call(e, h);
-      if (T !== $ || T && !m(s[h], e[h], t)) return !1;
+      if (T !== $ || T && !g(s[h], e[h], t)) return !1;
     }
     const u = Object.keys(s).filter((h) => !/^\d+$/.test(h)), d = Object.keys(e).filter((h) => !/^\d+$/.test(h));
     if (u.length !== d.length) return !1;
     for (const h of u)
-      if (!Object.prototype.hasOwnProperty.call(e, h) || !m(s[h], e[h], t)) return !1;
+      if (!Object.prototype.hasOwnProperty.call(e, h) || !g(s[h], e[h], t)) return !1;
     return !0;
   }
   if (Array.isArray(s) !== Array.isArray(e)) return !1;
   const n = s, o = e, a = Object.keys(n), f = Object.keys(o);
   if (a.length !== f.length) return !1;
   for (const c of a)
-    if (!Object.prototype.hasOwnProperty.call(o, c) || !m(n[c], o[c], t)) return !1;
+    if (!Object.prototype.hasOwnProperty.call(o, c) || !g(n[c], o[c], t)) return !1;
   return !0;
 }
 function p(s, e = /* @__PURE__ */ new WeakMap()) {
@@ -736,10 +736,10 @@ function _(s) {
   }
   return Object.keys(e).length > 0 ? e : void 0;
 }
-function ge(s, e) {
+function me(s, e) {
   return { name: s, selector: e };
 }
-function me(...s) {
+function ge(...s) {
   const e = {};
   for (const t of s)
     t && Object.assign(e, t);
@@ -890,26 +890,26 @@ class W {
     };
   }
 }
-const g = new W(), x = /* @__PURE__ */ new Map();
+const m = new W(), x = /* @__PURE__ */ new Map();
 function K(s, e) {
-  return g.getCausalLink(s, e);
+  return m.getCausalLink(s, e);
 }
 function H(s, e, t) {
-  g.addEvent(e, s, t), x.set(s, e);
+  m.addEvent(e, s, t), x.set(s, e);
 }
 function ve() {
-  g.clear(), x.clear();
+  m.clear(), x.clear();
 }
 function ye() {
-  return g;
+  return m;
 }
 const we = {
-  getCauses: (s, e) => g.getCauses(s, e),
-  getEffects: (s, e) => g.getEffects(s, e),
-  getCausalChain: (s) => g.getCausalChain(s),
-  areCausallyRelated: (s, e) => g.areCausallyRelated(s, e),
-  getEventsByScope: (s) => g.getEventsByScope(s),
-  getStats: () => g.getStats()
+  getCauses: (s, e) => m.getCauses(s, e),
+  getEffects: (s, e) => m.getEffects(s, e),
+  getCausalChain: (s) => m.getCausalChain(s),
+  areCausallyRelated: (s, e) => m.areCausallyRelated(s, e),
+  getEventsByScope: (s) => m.getEventsByScope(s),
+  getStats: () => m.getStats()
 };
 function G(s, e, t) {
   const i = O(), r = z(), n = [
@@ -974,7 +974,7 @@ class U {
         try {
           this.circuitBreaker.executeSync(() => {
             const f = r();
-            if (!m(f, n.lastValue)) {
+            if (!g(f, n.lastValue)) {
               const c = t || `watch_${i}`;
               let l;
               if (typeof f == "object" && f !== null)
@@ -1558,9 +1558,12 @@ function Be(s, e) {
 }
 function xe(s, e) {
   const t = /* @__PURE__ */ new Map();
-  for (const i of s) {
-    const r = Math.floor(i.timestamp / e) * e, n = t.get(r) || [];
-    n.push(i), t.set(r, n);
+  if (s.length === 0)
+    return t;
+  const i = Math.min(...s.map((r) => r.timestamp));
+  for (const r of s) {
+    const n = Math.floor((r.timestamp - i) / e) * e + i, o = t.get(n) || [];
+    o.push(r), t.set(n, o);
   }
   return t;
 }
@@ -1755,11 +1758,11 @@ export {
   Fe as createLevelFilter,
   Ie as createSatori,
   Ae as createScopeFilter,
-  ge as createStateSelector,
+  me as createStateSelector,
   Re as createTagFilter,
   Ne as createTextFilter,
   p as deepClone,
-  m as deepEqual,
+  g as deepEqual,
   P as detectPlatform,
   be as diffSnapshots,
   j as extractCallsite,
@@ -1784,7 +1787,7 @@ export {
   V as getEnvInfo,
   he as getGlobalMetrics,
   Be as groupBy,
-  me as mergeSnapshots,
+  ge as mergeSnapshots,
   z as now,
   de as resetGlobalMetrics,
   H as updateCausalLink,
