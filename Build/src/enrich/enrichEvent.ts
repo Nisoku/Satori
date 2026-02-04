@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel, LogOptions, SatoriConfig } from '../core/types.js';
+import type { LogEntry, LogOptions, SatoriConfig } from '../core/types.js';
 import { generateId } from '../core/utils/ids.js';
 import { now } from '../core/utils/time.js';
 import { extractCallsite } from '../core/utils/stacktrace.js';
@@ -7,7 +7,7 @@ import { captureStateSnapshot } from './stateSnapshot.js';
 import { getCausalLink } from './causal.js';
 
 interface EventInput {
-  level: LogLevel;
+  level: string;
   scope: string;
   message: string;
   options?: LogOptions;
@@ -41,8 +41,13 @@ export function enrichEvent(
     suggest: input.options?.suggest,
   };
 
+  // Add user-provided state
+  if (input.options?.state) {
+    entry.state = { ...input.options.state };
+  }
+
   if (config.enableCallsite && !entry.__internal?.isReplay) {
-    entry.callsite = extractCallsite(3);
+    entry.callsite = extractCallsite(4); // Adjusted depth for new call stack
   }
 
   if (config.enableEnvInfo && !entry.__internal?.isReplay) {
@@ -50,7 +55,10 @@ export function enrichEvent(
   }
 
   if (config.enableStateSnapshot && !entry.__internal?.isReplay) {
-    entry.state = captureStateSnapshot(config);
+    const snapshot = captureStateSnapshot(config);
+    if (snapshot) {
+      entry.state = { ...entry.state, ...snapshot };
+    }
   }
 
   if (config.enableCausalLinks && !entry.__internal?.isReplay) {

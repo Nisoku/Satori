@@ -1,7 +1,7 @@
 import type { LogEntry, LogLevel, Middleware } from '../core/types.js';
 
 export function createLevelFilter(minLevel: LogLevel): Middleware {
-  const levels: Record<LogLevel, number> = {
+  const levels: Record<string, number> = {
     debug: 0,
     info: 1,
     warn: 2,
@@ -11,7 +11,7 @@ export function createLevelFilter(minLevel: LogLevel): Middleware {
   const minSeverity = levels[minLevel];
 
   return (entry, next) => {
-    if (levels[entry.level] >= minSeverity) {
+    if ((levels[entry.level] ?? 0) >= minSeverity) {
       next();
     }
   };

@@ -1,3 +1,4 @@
+// Main exports
 export { createSatori } from './logger/createSatori.js';
 export { ScopedLogger } from './logger/scopedLogger.js';
 export { SimpleEventBus } from './bus/eventBus.js';
@@ -5,26 +6,59 @@ export { OverlayBridge } from './overlay/bridge.js';
 export { OverlayState } from './overlay/state.js';
 export { WatcherEngine } from './watch/watcherEngine.js';
 
+// Core types
 export type {
   SatoriInstance,
   SatoriConfig,
   SatoriLogger,
+  SatoriMetrics,
   LogEntry,
+  LogEntryBase,
+  LogEntryMeta,
   LogLevel,
   LogOptions,
   EventBus,
+  BusMetrics,
   WatchSource,
   WhenPredicate,
   WhenCallback,
   WatchHandle,
   Middleware,
-  EventSubscriber
+  EventSubscriber,
+  CustomLogLevel,
+  EnvironmentInfo,
+  RuntimePlatform,
+  RateLimitConfig,
+  DeduplicationConfig,
+  CircuitBreakerConfig,
+  CircuitState,
+  StateSelector,
+  PersistenceConfig,
+  PersistenceAdapter,
+  PersistenceReadOptions
 } from './core/types.js';
 
-export { DEFAULT_CONFIG } from './core/config.js';
+// Config
+export { DEFAULT_CONFIG, DEFAULT_RATE_LIMIT_CONFIG, DEFAULT_DEDUP_CONFIG, DEFAULT_CIRCUIT_BREAKER_CONFIG } from './core/config.js';
+
+// Validation
+export { validateConfig, assertValidConfig } from './core/validation.js';
+export type { ValidationResult } from './core/validation.js';
+
+// Utilities
 export { generateId } from './core/utils/ids.js';
 export { extractCallsite } from './core/utils/stacktrace.js';
 export { now, formatTimestamp } from './core/utils/time.js';
+export { deepEqual, deepClone, computeHash } from './core/utils/deepEqual.js';
+
+// Metrics
+export { MetricsCollector, getGlobalMetrics, resetGlobalMetrics } from './core/metrics.js';
+export type { MetricsSnapshot } from './core/metrics.js';
+
+// Bus components
+export { RateLimiter } from './bus/rateLimiter.js';
+export { Deduplicator } from './bus/deduplicator.js';
+export { CircuitBreaker, CircuitOpenError } from './bus/circuitBreaker.js';
 
 export { 
   createLevelFilter,
@@ -33,10 +67,40 @@ export {
   createTextFilter
 } from './bus/middleware.js';
 
+// Enrichment
+export { getEnvInfo, detectPlatform } from './enrich/env.js';
+export { captureStateSnapshot, createStateSelector, mergeSnapshots, diffSnapshots } from './enrich/stateSnapshot.js';
+export { getCausalLink, updateCausalLink, clearCausalLinks, getCausalGraph, causalGraph } from './enrich/causal.js';
+
+// Filters
 export {
   filterByLevel,
   filterByScopes,
+  filterByScopePattern,
   filterByTags,
+  filterByAllTags,
   filterByText,
-  applyAllFilters
+  filterByRegex,
+  filterByTimeRange,
+  filterByRelativeTime,
+  filterByCause,
+  filterByHasCause,
+  filterByState,
+  filterByStateKey,
+  filterByStateValue,
+  applyAllFilters,
+  groupBy,
+  aggregateByTime,
+  countByLevel,
+  countByScope
 } from './overlay/filters.js';
+export type { FilterOptions } from './overlay/filters.js';
+
+// Persistence
+export { 
+  MemoryAdapter, 
+  LocalStorageAdapter, 
+  IndexedDBAdapter, 
+  ConsoleAdapter,
+  PersistenceManager 
+} from './persistence/index.js';

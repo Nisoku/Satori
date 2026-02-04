@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satori Demo</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="light">
+  <header class="header">
+    <div class="header-content">
+      <a href="../" class="logo">
+        <img src="assets/images/satori-logo-light.svg" alt="Satori" class="logo-light">
+        <img src="assets/images/satori-logo-dark.svg" alt="Satori" class="logo-dark">
+      </a>
+      <nav class="nav">
+        <a href="../docs/" class="nav-link">Documentation</a>
+        <a href="https://github.com/Nisoku/Satori" class="nav-link" target="_blank">GitHub</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2 class="panel-title">Log Event</h2>
+        <div class="form-group">
+          <label for="scope">Scope</label>
+          <input type="text" id="scope" value="demo" placeholder="Logger scope">
+        </div>
+        <div class="form-group">
+          <label for="level">Level</label>
+          <select id="level">
+            <option value="debug">debug</option>
+            <option value="info" selected>info</option>
+            <option value="warn">warn</option>
+            <option value="error">error</option>
+            <option value="critical">critical (custom)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <input type="text" id="message" placeholder="Log message" value="Hello from Satori!">
+        </div>
+        <div class="form-group">
+          <label for="tags">Tags</label>
+          <input type="text" id="tags" placeholder="tag1, tag2">
+        </div>
+        <div class="button-group">
+          <button id="logBtn" class="btn btn-primary">Log Event</button>
+          <button id="clearBtn" class="btn btn-secondary">Clear</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">State Watching</h2>
+        <p class="panel-description">Watch values and automatically log changes</p>
+        <div class="counter-display">
+          <span class="counter-label">Counter</span>
+          <span id="counterValue" class="counter-value">0</span>
+        </div>
+        <div class="button-group">
+          <button id="decrementBtn" class="btn btn-secondary">-</button>
+          <button id="incrementBtn" class="btn btn-secondary">+</button>
+        </div>
+        <div class="watch-status">
+          <span class="status-dot" id="watchDot"></span>
+          <span id="watchStatus">Watching</span>
+          <button id="toggleWatchBtn" class="btn btn-small">Stop</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Advanced Features</h2>
+        <div class="feature-buttons">
+          <button id="bulkBtn" class="btn btn-secondary btn-block">Burst 50 Events</button>
+          <button id="dedupBtn" class="btn btn-secondary btn-block">Test Deduplication</button>
+          <button id="causalBtn" class="btn btn-secondary btn-block">Causal Chain</button>
+          <button id="errorBtn" class="btn btn-secondary btn-block">Trigger Errors</button>
+        </div>
+      </section>
+    </aside>
+
+    <div class="content">
+      <section class="panel metrics-panel">
+        <h2 class="panel-title">Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-value" id="metricTotal">0</span>
+            <span class="metric-label">Total Events</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="metricRate">0</span>
+            <span class="metric-label">Events/sec</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="metricDropped">0</span>
+            <span class="metric-label">Rate Limited</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="metricDeduped">0</span>
+            <span class="metric-label">Deduplicated</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="metricCircuit">closed</span>
+            <span class="metric-label">Circuit Breaker</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="metricWatchers">0</span>
+            <span class="metric-label">Active Watchers</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel events-panel">
+        <div class="events-header">
+          <h2 class="panel-title">Event Log <span id="eventCount" class="event-count">(0)</span></h2>
+          <div class="filter-bar">
+            <select id="filterLevel" class="filter-select">
+              <option value="">All Levels</option>
+              <option value="debug">debug</option>
+              <option value="info">info</option>
+              <option value="warn">warn</option>
+              <option value="error">error</option>
+              <option value="critical">critical</option>
+            </select>
+            <input type="text" id="filterSearch" class="filter-input" placeholder="Search messages...">
+            <label class="checkbox-label">
+              <input type="checkbox" id="autoScroll" checked>
+              Auto-scroll
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="showJson">
+              Show JSON
+            </label>
+          </div>
+        </div>
+        <div id="eventList" class="event-list">
+          <div class="event-placeholder">Loading Satori...</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Built with <a href="https://github.com/Nisoku/Satori">Satori</a></p>
+  </footer>
+
+  <script type="module" src="demo.js"></script>
+</body>
+</html>

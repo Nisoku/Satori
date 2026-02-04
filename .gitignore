@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+site/
+# Copied assets for local dev
+Docs/assets/
+Demo/dist/
+Demo/assets/

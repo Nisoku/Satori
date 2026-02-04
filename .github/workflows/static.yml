@@ -1,17 +1,14 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy browser build to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -23,21 +20,53 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        working-directory: Build
-        run: npm i
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Build
+      - name: Build library
         working-directory: Build
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
 
-      - name: Deploy browser build to GitHub Pages
+      - name: Build demo (copy dist and assets)
+        run: python Demo/demo.py build
+
+      - name: Build documentation
+        working-directory: Docs
+        run: |
+          npm ci
+          npx docmd build
+
+      - name: Prepare deployment
+        run: |
+          mkdir -p deploy
+          # Copy demo with its dist and assets
+          cp -r Demo deploy/demo
+          # Copy documentation site
+          cp -r Docs/site deploy/docs
+          # Copy library dist for direct access
+          cp -r Build/dist deploy/dist
+          # Copy root assets
+          cp -r assets deploy/assets
+          # Create index redirect to docs
+          cat > deploy/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head><meta http-equiv="refresh" content="0;url=docs/"></head>
+          <body><a href="docs/">Go to documentation</a></body>
+          </html>
+          EOF
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: Build/dist
+          publish_dir: deploy
