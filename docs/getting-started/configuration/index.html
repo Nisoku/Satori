@@ -352,7 +352,7 @@
                 <div class="main-content">
                     <p>Satori works out of the box with sensible defaults, but you can customize every aspect of its behavior.</p>
 <h2 id="basic-configuration">Basic Configuration</h2>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({
   <span class="hljs-attr">logLevel</span>: <span class="hljs-string">&#x27;info&#x27;</span>,
@@ -509,7 +509,7 @@ logger.<span class="hljs-title function_">info</span>(<span class="hljs-string">
 </code></pre>
 <h2 id="persistence">Persistence</h2>
 <p>Store events for debugging and analysis. Import and use adapter classes:</p>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori, <span class="hljs-title class_">MemoryAdapter</span>, <span class="hljs-title class_">LocalStorageAdapter</span>, <span class="hljs-title class_">IndexedDBAdapter</span>, <span class="hljs-title class_">ConsoleAdapter</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori, <span class="hljs-title class_">MemoryAdapter</span>, <span class="hljs-title class_">LocalStorageAdapter</span>, <span class="hljs-title class_">IndexedDBAdapter</span>, <span class="hljs-title class_">ConsoleAdapter</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Memory adapter (non-persistent)</span>
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({

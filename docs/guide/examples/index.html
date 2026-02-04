@@ -365,7 +365,7 @@
 <hr>
 <h2 id="basic-logging">Basic Logging</h2>
 <h3 id="simple-application-logging">Simple Application Logging</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({ <span class="hljs-attr">logLevel</span>: <span class="hljs-string">&#x27;info&#x27;</span> });
 <span class="hljs-keyword">const</span> logger = satori.<span class="hljs-title function_">createLogger</span>(<span class="hljs-string">&#x27;app&#x27;</span>);
@@ -421,7 +421,7 @@
 <h3 id="custom-hook-for-logging">Custom Hook for Logging</h3>
 <pre class="hljs"><code><span class="hljs-comment">// useSatoriLogger.ts</span>
 <span class="hljs-keyword">import</span> { useEffect, useRef, useMemo } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
-<span class="hljs-keyword">import</span> { createSatori, <span class="hljs-title class_">SatoriLogger</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<span class="hljs-keyword">import</span> { createSatori, <span class="hljs-title class_">SatoriLogger</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Create a single Satori instance</span>
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({
@@ -509,7 +509,7 @@
 <h2 id="expressjs-middleware">Express.js Middleware</h2>
 <h3 id="request-logging-middleware">Request Logging Middleware</h3>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> express <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;express&#x27;</span>;
-<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({
   <span class="hljs-attr">rateLimit</span>: { <span class="hljs-attr">enabled</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">maxEventsPerSecond</span>: <span class="hljs-number">1000</span> }
@@ -580,7 +580,7 @@ app.<span class="hljs-title function_">use</span>(errorHandler);
 <h2 id="state-management">State Management</h2>
 <h3 id="redux-integration">Redux Integration</h3>
 <pre class="hljs"><code><span class="hljs-comment">// satoriMiddleware.ts</span>
-<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>();
 <span class="hljs-keyword">const</span> logger = satori.<span class="hljs-title function_">createLogger</span>(<span class="hljs-string">&#x27;redux&#x27;</span>);
@@ -614,7 +614,7 @@ app.<span class="hljs-title function_">use</span>(errorHandler);
 </code></pre>
 <h3 id="zustand-integration">Zustand Integration</h3>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> create <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zustand&#x27;</span>;
-<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>();
 <span class="hljs-keyword">const</span> logger = satori.<span class="hljs-title function_">createLogger</span>(<span class="hljs-string">&#x27;store&#x27;</span>);
@@ -691,7 +691,7 @@ process.<span class="hljs-title function_">on</span>(<span class="hljs-string">&
 </code></pre>
 <h3 id="error-boundary-react">Error Boundary (React)</h3>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Component</span>, <span class="hljs-title class_">ErrorInfo</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
-<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>();
 <span class="hljs-keyword">const</span> errorLogger = satori.<span class="hljs-title function_">createLogger</span>(<span class="hljs-string">&#x27;react.error&#x27;</span>);

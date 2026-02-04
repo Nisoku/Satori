@@ -353,7 +353,7 @@
                     <p>Satori provides comprehensive filtering functions to query events by level, scope, tags, time, and more.</p>
 <h2 id="basic-filters">Basic Filters</h2>
 <h3 id="filter-by-level">Filter by Level</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByLevel } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByLevel } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> events = satori.<span class="hljs-title function_">getEvents</span>();
 
@@ -362,7 +362,7 @@
 <span class="hljs-keyword">const</span> debugAndAbove = <span class="hljs-title function_">filterByLevel</span>(events, <span class="hljs-string">&#x27;debug&#x27;</span>);
 </code></pre>
 <h3 id="filter-by-scope">Filter by Scope</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByScope } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByScope } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Exact match</span>
 <span class="hljs-keyword">const</span> authEvents = <span class="hljs-title function_">filterByScope</span>(events, <span class="hljs-string">&#x27;auth&#x27;</span>);
@@ -372,7 +372,7 @@
 <span class="hljs-comment">// Matches: &#x27;api&#x27;, &#x27;api.users&#x27;, &#x27;api.orders&#x27;, etc.</span>
 </code></pre>
 <h3 id="filter-by-tags">Filter by Tags</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByTag, filterByTags } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByTag, filterByTags } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Single tag</span>
 <span class="hljs-keyword">const</span> securityEvents = <span class="hljs-title function_">filterByTag</span>(events, <span class="hljs-string">&#x27;security&#x27;</span>);
@@ -384,7 +384,7 @@
 <span class="hljs-keyword">const</span> userOrAdmin = <span class="hljs-title function_">filterByTags</span>(events, [<span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-string">&#x27;admin&#x27;</span>], { <span class="hljs-attr">match</span>: <span class="hljs-string">&#x27;any&#x27;</span> });
 </code></pre>
 <h3 id="filter-by-time-range">Filter by Time Range</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByTimeRange } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByTimeRange } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">const</span> now = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>();
 <span class="hljs-keyword">const</span> oneHourAgo = now - (<span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>);
@@ -405,7 +405,7 @@
   filterByLevel, 
   filterByScope, 
   filterByTimeRange 
-} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-keyword">let</span> results = satori.<span class="hljs-title function_">getEvents</span>();
 
@@ -420,7 +420,7 @@ results = <span class="hljs-title function_">filterByTimeRange</span>(results, {
 </code></pre>
 <h2 id="advanced-filtering">Advanced Filtering</h2>
 <h3 id="filter-by-state">Filter by State</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Find events where userId matches</span>
 <span class="hljs-keyword">const</span> userEvents = <span class="hljs-title function_">filterByState</span>(events, { <span class="hljs-attr">userId</span>: <span class="hljs-string">&#x27;123&#x27;</span> });
@@ -431,7 +431,7 @@ results = <span class="hljs-title function_">filterByTimeRange</span>(results, {
 });
 </code></pre>
 <h3 id="filter-by-message-pattern">Filter by Message Pattern</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Substring match</span>
 <span class="hljs-keyword">const</span> loginEvents = <span class="hljs-title function_">filterByMessage</span>(events, <span class="hljs-string">&#x27;login&#x27;</span>);
@@ -440,7 +440,7 @@ results = <span class="hljs-title function_">filterByTimeRange</span>(results, {
 <span class="hljs-keyword">const</span> errorPatterns = <span class="hljs-title function_">filterByMessage</span>(events, <span class="hljs-regexp">/error|fail|exception/i</span>);
 </code></pre>
 <h3 id="filter-by-cause">Filter by Cause</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByCause } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { filterByCause } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
 
 <span class="hljs-comment">// Find all events caused by a specific event</span>
 <span class="hljs-keyword">const</span> effects = <span class="hljs-title function_">filterByCause</span>(events, <span class="hljs-string">&#x27;evt_12345&#x27;</span>);
