@@ -8,6 +8,7 @@
 
 [![CI](https://github.com/Nisoku/Satori/actions/workflows/ci.yml/badge.svg)](https://github.com/Nisoku/Satori/actions/workflows/ci.yml)
 [![Deploy](https://github.com/Nisoku/Satori/actions/workflows/static.yml/badge.svg)](https://github.com/Nisoku/Satori/actions/workflows/static.yml)
+[![npm version](https://img.shields.io/npm/v/@nisoku/satori-log.svg)](https://www.npmjs.com/package/@nisoku/satori-log)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [Documentation](./Docs/site/) | [Demo](./Demo/) | [API Reference](./Docs/docs/api/core.md)
@@ -66,7 +67,7 @@ satori.bus.subscribe((event) => {
 ## Installation
 
 ```bash
-npm install satori-log
+npm install @nisoku/satori-log
 ```
 
 ## Documentation
