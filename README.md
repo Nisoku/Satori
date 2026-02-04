@@ -70,6 +70,8 @@ satori.bus.subscribe((event) => {
 npm install @nisoku/satori-log
 ```
 
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
+
 ## Documentation
 
 | Section | Description |
