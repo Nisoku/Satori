@@ -225,9 +225,14 @@ export function aggregateByTime(
   bucketSizeMs: number
 ): Map<number, LogEntry[]> {
   const buckets = new Map<number, LogEntry[]>();
+  if (events.length === 0) {
+    return buckets;
+  }
+
+  const base = Math.min(...events.map(e => e.timestamp));
   
   for (const event of events) {
-    const bucket = Math.floor(event.timestamp / bucketSizeMs) * bucketSizeMs;
+    const bucket = Math.floor((event.timestamp - base) / bucketSizeMs) * bucketSizeMs + base;
     const existing = buckets.get(bucket) || [];
     existing.push(event);
     buckets.set(bucket, existing);
