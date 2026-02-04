@@ -35,8 +35,9 @@ export function createSatori(config: Partial<SatoriConfig> = {}): SatoriInstance
     enableMetrics: resolvedConfig.enableMetrics
   });
 
-  // Auto-log to console when available
-  if (resolvedConfig.enableConsole !== false && typeof console !== 'undefined') {
+  // Auto-log to console when available (disabled by default in tests)
+  const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
+  if (!isTestEnv && resolvedConfig.enableConsole !== false && typeof console !== 'undefined') {
     bus.subscribe((entry) => {
       const level = entry.level as string;
       const method = level === 'debug' ? 'log' : level;
