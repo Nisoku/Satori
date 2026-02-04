@@ -1,5 +1,5 @@
 {
-  "name": "satori-log",
+  "name": "@nisoku/satori-log",
   "version": "0.1.0",
   "description": "Event-centric observability layer for complex apps.",
   "main": "./dist/satori.cjs.js",

@@ -37,7 +37,7 @@ console.log(`Circuit state: ${metrics.circuitBreakerState}`);
 ### Direct Usage
 
 ```typescript
-import { CircuitBreaker } from 'satori-log';
+import { CircuitBreaker } from '@nisoku/satori-log';
 
 const cb = new CircuitBreaker({
   enabled: true,
@@ -101,7 +101,7 @@ Satori provides several persistence adapters for storing log events. Pass an ada
 In-memory storage (non-persistent, useful for testing):
 
 ```typescript
-import { createSatori, MemoryAdapter } from 'satori-log';
+import { createSatori, MemoryAdapter } from '@nisoku/satori-log';
 
 const satori = createSatori({
   persistence: {
@@ -116,7 +116,7 @@ const satori = createSatori({
 Browser localStorage persistence:
 
 ```typescript
-import { createSatori, LocalStorageAdapter } from 'satori-log';
+import { createSatori, LocalStorageAdapter } from '@nisoku/satori-log';
 
 const satori = createSatori({
   persistence: {
@@ -131,7 +131,7 @@ const satori = createSatori({
 Browser IndexedDB for larger datasets:
 
 ```typescript
-import { createSatori, IndexedDBAdapter } from 'satori-log';
+import { createSatori, IndexedDBAdapter } from '@nisoku/satori-log';
 
 const satori = createSatori({
   persistence: {
@@ -146,7 +146,7 @@ const satori = createSatori({
 Outputs events to console (useful for debugging):
 
 ```typescript
-import { createSatori, ConsoleAdapter } from 'satori-log';
+import { createSatori, ConsoleAdapter } from '@nisoku/satori-log';
 
 const satori = createSatori({
   persistence: {
@@ -161,7 +161,7 @@ const satori = createSatori({
 Create typed, reusable state selectors for watching:
 
 ```typescript
-import { createStateSelector } from 'satori-log';
+import { createStateSelector } from '@nisoku/satori-log';
 
 interface AppState {
   users: {
@@ -223,7 +223,7 @@ for (const event of buffer) {
 Satori exports its deep equality utilities:
 
 ```typescript
-import { deepEqual, deepClone, computeHash } from 'satori-log';
+import { deepEqual, deepClone, computeHash } from '@nisoku/satori-log';
 
 // Deep comparison (handles NaN, circular refs, Map, Set)
 deepEqual({ a: 1 }, { a: 1 });           // true

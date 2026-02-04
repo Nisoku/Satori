@@ -22,7 +22,7 @@ yarn add satori-log
 ### 1. Create a Satori Instance
 
 ```typescript
-import { createSatori } from 'satori-log';
+import { createSatori } from '@nisoku/satori-log';
 
 const satori = createSatori();
 ```
@@ -78,7 +78,7 @@ satori.dispose();
 ## Complete Example
 
 ```typescript
-import { createSatori } from 'satori-log';
+import { createSatori } from '@nisoku/satori-log';
 
 // Initialize
 const satori = createSatori({

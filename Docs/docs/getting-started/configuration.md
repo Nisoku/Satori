@@ -8,7 +8,7 @@ Satori works out of the box with sensible defaults, but you can customize every 
 ## Basic Configuration
 
 ```typescript
-import { createSatori } from 'satori-log';
+import { createSatori } from '@nisoku/satori-log';
 
 const satori = createSatori({
   logLevel: 'info',
@@ -180,7 +180,7 @@ logger.info('Button clicked');  // Deduplicated
 Store events for debugging and analysis. Import and use adapter classes:
 
 ```typescript
-import { createSatori, MemoryAdapter, LocalStorageAdapter, IndexedDBAdapter, ConsoleAdapter } from 'satori-log';
+import { createSatori, MemoryAdapter, LocalStorageAdapter, IndexedDBAdapter, ConsoleAdapter } from '@nisoku/satori-log';
 
 // Memory adapter (non-persistent)
 const satori = createSatori({
