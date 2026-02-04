@@ -55,11 +55,14 @@ satori.bus.subscribe((event) => {
 ## Installation
 
 ```bash
-npm install satori-log
+npm install @nisoku/satori-log
 ```
+
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
 
 ## Next Steps
 
+- [Interactive Demo](https://nisoku.github.io/Satori/demo/): Try Satori in your browser
 - [Quick Start](./getting-started/quickstart.md): Get up and running in minutes
 - [Configuration](./getting-started/configuration.md): Customize Satori for your needs
 - [API Reference](./api/core.md): Complete API documentation

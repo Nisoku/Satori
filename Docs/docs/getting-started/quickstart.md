@@ -8,14 +8,16 @@ This guide will get you up and running with Satori in just a few minutes.
 ## Installation
 
 ```bash
-npm install satori-log
+npm install @nisoku/satori-log
 ```
 
 Or with yarn:
 
 ```bash
-yarn add satori-log
+yarn add @nisoku/satori-log
 ```
+
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
 
 ## Basic Usage
 

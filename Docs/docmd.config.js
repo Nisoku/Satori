@@ -37,6 +37,7 @@ module.exports = {
   // --- Navigation (Sidebar) ---
   navigation: [
     { title: 'Home', path: '/', icon: 'home' },
+    { title: 'Interactive Demo', path: 'https://nisoku.github.io/Satori/demo/', icon: 'play-circle', external: true },
     {
       title: 'Getting Started',
       icon: 'rocket',
