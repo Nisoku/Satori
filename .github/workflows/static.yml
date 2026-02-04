@@ -39,11 +39,14 @@ jobs:
       - name: Build demo (copy dist and assets)
         run: python Demo/demo.py build
 
+      - name: Copy assets for documentation
+        run: cp -r assets Docs/
+
       - name: Build documentation
         working-directory: Docs
         run: |
           npm ci
-          npx docmd build
+          npm run build
 
       - name: Prepare deployment
         run: |
