@@ -82,18 +82,18 @@ function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
   if (s instanceof RegExp || e instanceof RegExp) return !1;
   if (s instanceof Map && e instanceof Map) {
     if (s.size !== e.size) return !1;
-    for (const [a, u] of s)
-      if (!e.has(a) || !m(u, e.get(a), t)) return !1;
+    for (const [c, l] of s)
+      if (!e.has(c) || !m(l, e.get(c), t)) return !1;
     return !0;
   }
   if (s instanceof Map || e instanceof Map) return !1;
   if (s instanceof Set && e instanceof Set) {
     if (s.size !== e.size) return !1;
-    const a = Array.from(s), u = Array.from(e);
-    for (const f of a) {
+    const c = Array.from(s), l = Array.from(e);
+    for (const u of c) {
       let d = !1;
-      for (const h of u)
-        if (m(f, h, t)) {
+      for (const h of l)
+        if (m(u, h, t)) {
           d = !0;
           break;
         }
@@ -104,25 +104,25 @@ function m(s, e, t = /* @__PURE__ */ new WeakMap()) {
   if (s instanceof Set || e instanceof Set) return !1;
   if (Array.isArray(s) && Array.isArray(e)) {
     if (s.length !== e.length) return !1;
-    const a = Object.keys(s).filter((h) => /^\d+$/.test(h)).map(Number), u = Object.keys(e).filter((h) => /^\d+$/.test(h)).map(Number);
-    if (a.length !== u.length) return !1;
-    for (const h of a)
-      if (!u.includes(h)) return !1;
+    const c = Object.keys(s).filter((h) => /^\d+$/.test(h)).map(Number), l = Object.keys(e).filter((h) => /^\d+$/.test(h)).map(Number);
+    if (c.length !== l.length) return !1;
+    for (const h of c)
+      if (!l.includes(h)) return !1;
     for (let h = 0; h < s.length; h++) {
       const T = Object.prototype.hasOwnProperty.call(s, h), $ = Object.prototype.hasOwnProperty.call(e, h);
       if (T !== $ || T && !m(s[h], e[h], t)) return !1;
     }
-    const f = Object.keys(s).filter((h) => !/^\d+$/.test(h)), d = Object.keys(e).filter((h) => !/^\d+$/.test(h));
-    if (f.length !== d.length) return !1;
-    for (const h of f)
+    const u = Object.keys(s).filter((h) => !/^\d+$/.test(h)), d = Object.keys(e).filter((h) => !/^\d+$/.test(h));
+    if (u.length !== d.length) return !1;
+    for (const h of u)
       if (!Object.prototype.hasOwnProperty.call(e, h) || !m(s[h], e[h], t)) return !1;
     return !0;
   }
   if (Array.isArray(s) !== Array.isArray(e)) return !1;
-  const n = s, o = e, c = Object.keys(n), l = Object.keys(o);
-  if (c.length !== l.length) return !1;
-  for (const a of c)
-    if (!Object.prototype.hasOwnProperty.call(o, a) || !m(n[a], o[a], t)) return !1;
+  const n = s, o = e, a = Object.keys(n), f = Object.keys(o);
+  if (a.length !== f.length) return !1;
+  for (const c of a)
+    if (!Object.prototype.hasOwnProperty.call(o, c) || !m(n[c], o[c], t)) return !1;
   return !0;
 }
 function p(s, e = /* @__PURE__ */ new WeakMap()) {
@@ -652,11 +652,11 @@ class R {
   }
 }
 let A = 0;
-const z = Date.now().toString(36);
+const N = Date.now().toString(36);
 function O() {
-  return `${z}-${++A}`;
+  return `${N}-${++A}`;
 }
-function N() {
+function z() {
   return Date.now();
 }
 function pe(s) {
@@ -671,8 +671,8 @@ function j(s = 2) {
     if (!i) return;
     const r = i.match(/at\s+(.+?)\s+\((.+?):(\d+):(\d+)\)/) || i.match(/at\s+(.+?):(\d+):(\d+)/);
     if (r) {
-      const [, n, o, c, l] = r;
-      return `${o}:${c}:${l}${n ? ` (${n})` : ""}`;
+      const [, n, o, a, f] = r;
+      return `${o}:${a}:${f}${n ? ` (${n})` : ""}`;
     }
     return i.trim();
   } catch {
@@ -747,12 +747,12 @@ function me(...s) {
 }
 function be(s, e) {
   const t = [], i = [], r = [], n = new Set(s ? Object.keys(s) : []), o = new Set(e ? Object.keys(e) : []);
-  for (const c of o)
-    n.has(c) || t.push(c);
-  for (const c of n)
-    o.has(c) || i.push(c);
-  for (const c of n)
-    o.has(c) && s && e && JSON.stringify(s[c]) !== JSON.stringify(e[c]) && r.push(c);
+  for (const a of o)
+    n.has(a) || t.push(a);
+  for (const a of n)
+    o.has(a) || i.push(a);
+  for (const a of n)
+    o.has(a) && s && e && JSON.stringify(s[a]) !== JSON.stringify(e[a]) && r.push(a);
   return { added: t, removed: i, changed: r };
 }
 class W {
@@ -788,13 +788,13 @@ class W {
    * Get all causes (direct and transitive) for an event
    */
   getCauses(e, t = 1 / 0) {
-    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, c) => {
-      if (r.has(o) || c > t) return;
+    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, a) => {
+      if (r.has(o) || a > t) return;
       r.add(o);
-      const l = this.nodes.get(o);
-      if (l)
-        for (const a of l.causes)
-          i.add(a), n(a, c + 1);
+      const f = this.nodes.get(o);
+      if (f)
+        for (const c of f.causes)
+          i.add(c), n(c, a + 1);
     };
     return n(e, 0), Array.from(i);
   }
@@ -802,13 +802,13 @@ class W {
    * Get all effects (direct and transitive) for an event
    */
   getEffects(e, t = 1 / 0) {
-    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, c) => {
-      if (r.has(o) || c > t) return;
+    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, a) => {
+      if (r.has(o) || a > t) return;
       r.add(o);
-      const l = this.nodes.get(o);
-      if (l)
-        for (const a of l.effects)
-          i.add(a), n(a, c + 1);
+      const f = this.nodes.get(o);
+      if (f)
+        for (const c of f.effects)
+          i.add(c), n(c, a + 1);
     };
     return n(e, 0), Array.from(i);
   }
@@ -859,11 +859,11 @@ class W {
       if (r) {
         for (const n of r.causes) {
           const o = this.nodes.get(n);
-          o && (o.effects = o.effects.filter((c) => c !== i));
+          o && (o.effects = o.effects.filter((a) => a !== i));
         }
         for (const n of r.effects) {
           const o = this.nodes.get(n);
-          o && (o.causes = o.causes.filter((c) => c !== i));
+          o && (o.causes = o.causes.filter((a) => a !== i));
         }
       }
       this.nodes.delete(i);
@@ -912,7 +912,7 @@ const we = {
   getStats: () => g.getStats()
 };
 function G(s, e, t) {
-  const i = O(), r = N(), n = [
+  const i = O(), r = z(), n = [
     ...s.inheritedTags || [],
     ...s.options?.tags || []
   ], o = {
@@ -927,12 +927,12 @@ function G(s, e, t) {
     suggest: s.options?.suggest
   };
   if (s.options?.state && (o.state = { ...s.options.state }), e.enableCallsite && !o.__internal?.isReplay && (o.callsite = j(4)), e.enableEnvInfo && !o.__internal?.isReplay && (o.env = V(e)), e.enableStateSnapshot && !o.__internal?.isReplay) {
-    const c = _(e);
-    c && (o.state = { ...o.state, ...c });
+    const a = _(e);
+    a && (o.state = { ...o.state, ...a });
   }
   if (e.enableCausalLinks && !o.__internal?.isReplay) {
-    const c = K(s.scope, t);
-    c && (o.previousEventId = c);
+    const a = K(s.scope, t);
+    a && (o.previousEventId = a);
   }
   return o;
 }
@@ -973,38 +973,38 @@ class U {
       if (!(n.disposed || this.disposed))
         try {
           this.circuitBreaker.executeSync(() => {
-            const l = r();
-            if (!m(l, n.lastValue)) {
-              const a = t || `watch_${i}`;
-              let u;
-              if (typeof l == "object" && l !== null)
-                u = `${a}: state changed`;
+            const f = r();
+            if (!m(f, n.lastValue)) {
+              const c = t || `watch_${i}`;
+              let l;
+              if (typeof f == "object" && f !== null)
+                l = `${c}: state changed`;
               else {
-                const f = this.formatValue(n.lastValue), d = this.formatValue(l);
-                u = `${a}: ${f} -> ${d}`;
+                const u = this.formatValue(n.lastValue), d = this.formatValue(f);
+                l = `${c}: ${u} -> ${d}`;
               }
-              this.logger.info(u, {
+              this.logger.info(l, {
                 tags: ["watch"],
                 state: {
-                  [`${a}_prev`]: p(n.lastValue),
-                  [`${a}_current`]: p(l)
+                  [`${c}_prev`]: p(n.lastValue),
+                  [`${c}_current`]: p(f)
                 }
-              }), n.lastValue = p(l);
+              }), n.lastValue = p(f);
             }
             n.errorCount = 0;
           });
-        } catch (l) {
+        } catch (f) {
           n.errorCount++, (n.errorCount <= 3 || n.errorCount % 10 === 0) && this.logger.error(`Watch error for ${t || i} (count: ${n.errorCount})`, {
             tags: ["watch", "error"],
-            state: { error: l instanceof Error ? l.message : String(l) }
+            state: { error: f instanceof Error ? f.message : String(f) }
           }), n.errorCount >= 50 && (this.logger.error(`Watch ${t || i} disposed due to repeated errors`, {
             tags: ["watch", "error", "auto-disposed"]
           }), this.disposeWatcher(i));
         }
     };
     o();
-    const c = setInterval(o, this.config.pollingInterval || 250);
-    return n.intervalId = c, this.watchers.set(i, n), {
+    const a = setInterval(o, this.config.pollingInterval || 250);
+    return n.intervalId = a, this.watchers.set(i, n), {
       dispose: () => this.disposeWatcher(i)
     };
   }
@@ -1020,23 +1020,23 @@ class U {
       intervalId: null,
       errorCount: 0,
       disposed: !1
-    }, l = setInterval(() => {
+    }, f = setInterval(() => {
       if (!(o.disposed || this.disposed))
         try {
           this.circuitBreaker.executeSync(() => {
-            const a = n(), u = o.lastValue !== void 0 ? p(o.lastValue) : void 0, f = p(a);
-            t(u, f) && i(f, u), o.lastValue = f, o.errorCount = 0;
+            const c = n(), l = o.lastValue !== void 0 ? p(o.lastValue) : void 0, u = p(c);
+            t(l, u) && i(u, l), o.lastValue = u, o.errorCount = 0;
           });
-        } catch (a) {
+        } catch (c) {
           o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 === 0) && this.logger.error(`When condition error for ${r} (count: ${o.errorCount})`, {
             tags: ["when", "error"],
-            state: { error: a instanceof Error ? a.message : String(a) }
+            state: { error: c instanceof Error ? c.message : String(c) }
           }), o.errorCount >= 50 && (this.logger.error(`When handler ${r} disposed due to repeated errors`, {
             tags: ["when", "error", "auto-disposed"]
           }), this.disposeWhenHandler(r));
         }
     }, this.config.pollingInterval || 250);
-    return o.intervalId = l, this.whenHandlers.set(r, o), {
+    return o.intervalId = f, this.whenHandlers.set(r, o), {
       dispose: () => this.disposeWhenHandler(r)
     };
   }
@@ -1128,7 +1128,7 @@ class v {
     const r = this.config.logLevel || "info", n = this.levelSeverities[r] ?? 1;
     if ((this.levelSeverities[e] ?? 1) < n)
       return;
-    const c = G(
+    const a = G(
       {
         level: e,
         scope: this.scope,
@@ -1140,8 +1140,8 @@ class v {
       },
       this.config,
       this.lastEventId
-    ), l = this.inheritedCauseEventId ? [this.inheritedCauseEventId] : void 0;
-    H(this.scope, c.id, l), this.lastEventId = c.id, this.bus.publish(c);
+    ), f = this.inheritedCauseEventId ? [this.inheritedCauseEventId] : void 0;
+    H(this.scope, a.id, f), this.lastEventId = a.id, this.bus.publish(a);
   }
   tag(...e) {
     const t = new v(this.scope, this.config, this.bus, this.lastEventId);
@@ -1315,26 +1315,26 @@ class Te {
     const t = await this.getDB();
     return new Promise((i, r) => {
       const n = t.transaction(this.storeName, "readwrite"), o = n.objectStore(this.storeName);
-      for (const c of e)
-        o.put(c);
+      for (const a of e)
+        o.put(a);
       n.oncomplete = () => i(), n.onerror = () => r(n.error);
     });
   }
   async read(e) {
     const t = await this.getDB();
     return new Promise((i, r) => {
-      const c = t.transaction(this.storeName, "readonly").objectStore(this.storeName).index("timestamp"), l = [], a = c.openCursor();
-      a.onsuccess = () => {
-        const u = a.result;
-        if (u) {
-          const f = u.value;
+      const a = t.transaction(this.storeName, "readonly").objectStore(this.storeName).index("timestamp"), f = [], c = a.openCursor();
+      c.onsuccess = () => {
+        const l = c.result;
+        if (l) {
+          const u = l.value;
           let d = !0;
-          e?.startTime && f.timestamp < e.startTime && (d = !1), e?.endTime && f.timestamp > e.endTime && (d = !1), e?.levels?.length && !e.levels.includes(f.level) && (d = !1), e?.scopes?.length && !e.scopes.includes(f.scope) && (d = !1), d && l.push(f), u.continue();
+          e?.startTime && u.timestamp < e.startTime && (d = !1), e?.endTime && u.timestamp > e.endTime && (d = !1), e?.levels?.length && !e.levels.includes(u.level) && (d = !1), e?.scopes?.length && !e.scopes.includes(u.scope) && (d = !1), d && f.push(u), l.continue();
         } else {
-          let f = l;
-          e?.offset && (f = f.slice(e.offset)), e?.limit && (f = f.slice(0, e.limit)), i(f);
+          let u = f;
+          e?.offset && (u = u.slice(e.offset)), e?.limit && (u = u.slice(0, e.limit)), i(u);
         }
-      }, a.onerror = () => r(a.error);
+      }, c.onerror = () => r(c.error);
     });
   }
   async clear() {
@@ -1434,46 +1434,46 @@ ${e.errors.join(`
     circuitBreaker: t.circuitBreaker,
     enableMetrics: t.enableMetrics
   });
-  t.enableConsole !== !1 && typeof console < "u" && i.subscribe((a) => {
-    const u = a.level;
-    (console[u === "debug" ? "log" : u] ?? console.log)(`[${a.scope}] ${a.message}`, a);
+  !(typeof process < "u" && process.env?.NODE_ENV === "test") && t.enableConsole !== !1 && typeof console < "u" && i.subscribe((l) => {
+    const u = l.level;
+    (console[u === "debug" ? "log" : u] ?? console.log)(`[${l.scope}] ${l.message}`, l);
   });
-  const r = new v("root", t, i), n = /* @__PURE__ */ new Map();
-  n.set("root", r);
-  let o = null;
-  t.persistence?.enabled && (o = new J(t.persistence), i.subscribe((a) => {
-    o?.add(a);
+  const n = new v("root", t, i), o = /* @__PURE__ */ new Map();
+  o.set("root", n);
+  let a = null;
+  t.persistence?.enabled && (a = new J(t.persistence), i.subscribe((l) => {
+    a?.add(l);
   }));
-  const c = new C(), l = Date.now();
+  const f = new C(), c = Date.now();
   return {
     config: t,
     bus: i,
-    rootLogger: r,
-    createLogger(a) {
-      const u = new v(a, t, i);
-      return n.set(a, u), c.setLoggerCount(n.size), u;
+    rootLogger: n,
+    createLogger(l) {
+      const u = new v(l, t, i);
+      return o.set(l, u), f.setLoggerCount(o.size), u;
     },
     getMetrics() {
-      let a = 0;
-      for (const u of n.values())
-        u.isDisposed() || (a += u.getWatcherCount());
-      return c.setWatcherCount(a), {
+      let l = 0;
+      for (const u of o.values())
+        u.isDisposed() || (l += u.getWatcherCount());
+      return f.setWatcherCount(l), {
         bus: i.getMetrics(),
-        loggerCount: n.size,
-        watcherCount: a,
+        loggerCount: o.size,
+        watcherCount: l,
         circuitState: i.getCircuitBreaker().getState(),
-        uptime: Date.now() - l
+        uptime: Date.now() - c
       };
     },
     async flush() {
-      o && await o.flush();
+      a && await a.flush();
     },
     dispose() {
-      for (const u of n.values())
+      for (const u of o.values())
         u.dispose();
-      n.clear();
-      const a = i.getReplayBuffer?.();
-      a && (a.length = 0), i.reset(), o && o.close().catch(console.error);
+      o.clear();
+      const l = i.getReplayBuffer?.();
+      l && (l.length = 0), i.reset(), a && a.close().catch(console.error);
     }
   };
 }
@@ -1717,7 +1717,7 @@ function Ae(s) {
     (s.length === 0 || s.includes(e.scope)) && t();
   };
 }
-function ze(s) {
+function Ne(s) {
   const e = s.toLowerCase();
   return (t, i) => {
     (e === "" || t.message.toLowerCase().includes(e) || t.scope.toLowerCase().includes(e) || t.tags.some((r) => r.toLowerCase().includes(e))) && i();
@@ -1757,7 +1757,7 @@ export {
   Ae as createScopeFilter,
   ge as createStateSelector,
   Re as createTagFilter,
-  ze as createTextFilter,
+  Ne as createTextFilter,
   p as deepClone,
   m as deepEqual,
   P as detectPlatform,
@@ -1785,7 +1785,7 @@ export {
   he as getGlobalMetrics,
   Be as groupBy,
   me as mergeSnapshots,
-  N as now,
+  z as now,
   de as resetGlobalMetrics,
   H as updateCausalLink,
   D as validateConfig
