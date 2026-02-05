@@ -76,19 +76,19 @@ Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
 
 | Section | Description |
 | --------- | ------------- |
-| [Quick Start](./Docs/docs/getting-started/quickstart.md) | Get up and running in 5 minutes |
-| [Configuration](./Docs/docs/getting-started/configuration.md) | Complete configuration options |
-| [State Watching](./Docs/docs/guide/watching.md) | Automatic change detection |
-| [Causal Linking](./Docs/docs/guide/causal.md) | Event relationship tracking |
-| [Filtering](./Docs/docs/guide/filtering.md) | Query and filter events |
-| [Advanced Features](./Docs/docs/guide/advanced.md) | Rate limiting, deduplication, circuit breaker |
-| [API Reference](./Docs/docs/api/core.md) | Complete API documentation |
-| [Filter Functions](./Docs/docs/api/filters.md) | Filter API reference |
-| [Examples](./Docs/docs/guide/examples.md) | Real-world usage patterns |
+| [Quick Start](https://nisoku.github.io/Satori/docs/getting-started/quickstart) | Get up and running in 5 minutes |
+| [Configuration](https://nisoku.github.io/Satori/docs/getting-started/configuration) | Complete configuration options |
+| [State Watching](https://nisoku.github.io/Satori/docs/guide/watching) | Automatic change detection |
+| [Causal Linking](https://nisoku.github.io/Satori/docs/guide/causal) | Event relationship tracking |
+| [Filtering](https://nisoku.github.io/Satori/docs/guide/filtering) | Query and filter events |
+| [Advanced Features](https://nisoku.github.io/Satori/docs/guide/advanced) | Rate limiting, deduplication, circuit breaker |
+| [API Reference](https://nisoku.github.io/Satori/docs/api/core) | Complete API documentation |
+| [Filter Functions](https://nisoku.github.io/Satori/docs/api/filters) | Filter API reference |
+| [Examples](https://nisoku.github.io/Satori/docs/guide/examples) | Real-world usage patterns |
 
 ## Demo
 
-Open [Demo/index.html](./Demo/index.html) in a browser to see Satori in action with an interactive playground.
+Open the live [demo](https://nisoku.github.io/Satori/demo/) in a browser to see Satori in action with an interactive playground.
 
 The demo showcases all major features:
 
@@ -101,26 +101,34 @@ The demo showcases all major features:
 
 ## Development
 
+### Install dependencies
 ```bash
-cd Build
+cd Build && npm install
+```
 
-# Install dependencies
-npm install
+### Run tests
+```bash
+cd Build && npm test
+```
 
-# Run tests
-npm test
+### Run tests in watch mode
+```bash
+cd Build && npm run test:watch
+```
 
-# Run tests in watch mode
-npm run test:watch
+### Type check
+```bash
+cd Build && npm run typecheck
+```
 
-# Type check
-npm run typecheck
+### Build
+```bash
+cd Build && npm run build
+```
 
-# Build
-npm run build
-
-# Build docs
-cd ../Docs && npx docmd build
+### Build docs
+```bash
+cd ../Docs && npm run build
 ```
 
 ## Project Structure
@@ -130,10 +138,13 @@ Satori/
   assets/           # Shared icons and images
   Build/            # Source code and build config
     src/            # TypeScript source
-    dist/           # Compiled output
   Demo/             # Interactive demo
   Docs/             # Documentation (docmd)
 ```
+
+## Contributing
+
+We love contributors! Feel free to open up PRs or issues for any ideas or bugs you find!
 
 ## License
 

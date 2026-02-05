@@ -151,6 +151,6 @@ console.log(dot);
 
 ## Next Steps
 
-- [Filtering Events](./filtering.md): Query events by various criteria
-- [Advanced Features](./advanced.md): Circuit breakers, persistence
-- [Examples](./examples.md): More real-world patterns
+- [Filtering Events](./filtering): Query events by various criteria
+- [Advanced Features](./advanced): Circuit breakers, persistence
+- [Examples](./examples): More real-world patterns

@@ -209,6 +209,6 @@ results = filterByTimeRange(results, { start: lastHour });
 
 ## Next Steps
 
-- [Advanced Features](./advanced.md): Persistence, circuit breakers
-- [Examples](./examples.md): Real-world patterns
-- [API Reference](../api/filters.md): Complete filter API
+- [Advanced Features](./advanced): Persistence, circuit breakers
+- [Examples](./examples): Real-world patterns
+- [API Reference](../api/filters): Complete filter API
