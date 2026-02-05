@@ -247,6 +247,6 @@ const satori = createSatori({
 
 ## Next Steps
 
-- [State Watching](../guide/watching): Automatically track changes
-- [Advanced Features](../guide/advanced): Circuit breakers, causal graphs
-- [API Reference](../api/): Complete API documentation
+- [State Watching](/docs/guide/watching): Automatically track changes
+- [Advanced Features](/docs/guide/advanced): Circuit breakers, causal graphs
+- [API Reference](/docs/api/): Complete API documentation

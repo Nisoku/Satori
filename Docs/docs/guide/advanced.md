@@ -239,5 +239,5 @@ const hash = computeHash({ msg: 'test' });
 
 ## Next Steps
 
-- [API Reference](../api/): Complete API documentation
-- [Examples](./examples): Real-world patterns
+- [API Reference](/docs/api/): Complete API documentation
+- [Examples](/docs/guide/examples): Real-world patterns

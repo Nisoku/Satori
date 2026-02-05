@@ -180,6 +180,6 @@ logger.watch(() => {
 
 ## Next Steps
 
-- [Causal Linking](./causal): Connect related events
-- [Filtering Events](./filtering): Query and filter events
-- [Examples](./examples): Real-world patterns
+- [Causal Linking](/docs/guide/causal): Connect related events
+- [Filtering Events](/docs/guide/filtering): Query and filter events
+- [Examples](/docs/guide/examples): Real-world patterns
