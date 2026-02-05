@@ -151,6 +151,6 @@ console.log(dot);
 
 ## Next Steps
 
-- [Filtering Events](/docs/guide/filtering): Query events by various criteria
-- [Advanced Features](/docs/guide/advanced): Circuit breakers, persistence
-- [Examples](/docs/guide/examples): More real-world patterns
+- [Filtering Events](/Satori/docs/guide/filtering): Query events by various criteria
+- [Advanced Features](/Satori/docs/guide/advanced): Circuit breakers, persistence
+- [Examples](/Satori/docs/guide/examples): More real-world patterns

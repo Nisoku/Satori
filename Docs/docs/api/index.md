@@ -7,18 +7,18 @@ This section contains the complete API reference for Satori, including all inter
 
 ## Core API
 
-### [Core API](/docs/api/core)
+### [Core API](/Satori/docs/api/core)
 
 The main Satori API including `createSatori()`, `SatoriInstance`, `SatoriLogger`, and core interfaces like `LogEntry`, `SatoriConfig`.
 
 ## Filtering API
 
-### [Filters](/docs/api/filters)
+### [Filters](/Satori/docs/api/filters)
 
 Comprehensive filtering functions for querying events: `filterByLevel()`, `filterByScope()`, `filterByTag()`, `filterByTimeRange()`, and more.
 
 ## Additional Resources
 
-- [Quick Start](/docs/getting-started/quickstart): Get started quickly
-- [Configuration](/docs/getting-started/configuration): Customize Satori
-- [Guide](/docs/guide/watching): In-depth tutorials and examples
+- [Quick Start](/Satori/docs/getting-started/quickstart): Get started quickly
+- [Configuration](/Satori/docs/getting-started/configuration): Customize Satori
+- [Guide](/Satori/docs/guide/watching): In-depth tutorials and examples

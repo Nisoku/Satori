@@ -131,6 +131,6 @@ process.on('exit', () => satori.dispose());
 
 ## Next Steps
 
-- [Configuration](/docs/getting-started/configuration): Customize logging behavior
-- [State Watching](/docs/guide/watching): Automatically track state changes
-- [API Reference](/docs/api/): Complete API documentation
+- [Configuration](/Satori/docs/getting-started/configuration): Customize logging behavior
+- [State Watching](/Satori/docs/guide/watching): Automatically track state changes
+- [API Reference](/Satori/docs/api/): Complete API documentation
