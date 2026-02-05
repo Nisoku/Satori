@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <defs>
+    <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#b30000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7b1fa2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Circle with ripple effect representing "awakening" -->
+  <circle cx="25" cy="25" r="20" fill="none" stroke="url(#rubyGrad)" stroke-width="2" opacity="0.3"/>
+  <circle cx="25" cy="25" r="14" fill="none" stroke="url(#rubyGrad)" stroke-width="2" opacity="0.6"/>
+  <circle cx="25" cy="25" r="8" fill="url(#rubyGrad)"/>
+  <!-- Text with Playfair Display serif font -->
+  <text x="55" y="34" font-family="'Playfair Display', Georgia, serif" font-size="28" font-weight="600" fill="#b30000">Satori</text>
+</svg>
