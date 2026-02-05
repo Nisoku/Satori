@@ -11,7 +11,7 @@
 [![npm version](https://img.shields.io/npm/v/@nisoku/satori-log.svg)](https://www.npmjs.com/package/@nisoku/satori-log)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[Documentation](./Docs/site/) | [Demo](./Demo/) | [API Reference](./Docs/docs/api/core.md)
+[Documentation](https://nisoku.github.io/Satori/docs/) | [Demo](https://nisoku.github.io/Satori/demo/) | [API Reference](https://nisoku.github.io/Satori/docs/api/core/)
 
 </div>
 
