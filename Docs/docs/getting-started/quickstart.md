@@ -133,4 +133,4 @@ process.on('exit', () => satori.dispose());
 
 - [Configuration](./configuration): Customize logging behavior
 - [State Watching](../guide/watching): Automatically track state changes
-- [API Reference](../api/core): Complete API documentation
+- [API Reference](../api/): Complete API documentation

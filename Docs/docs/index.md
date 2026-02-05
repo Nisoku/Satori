@@ -65,5 +65,5 @@ Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
 - [Interactive Demo](https://nisoku.github.io/Satori/demo/): Try Satori in your browser
 - [Quick Start](./getting-started/quickstart): Get up and running in minutes
 - [Configuration](./getting-started/configuration): Customize Satori for your needs
-- [API Reference](./api/core): Complete API documentation
+- [API Reference](./api/): Complete API documentation
 - [Examples](./guide/examples): Real-world usage patterns

@@ -11,7 +11,7 @@
 [![npm version](https://img.shields.io/npm/v/@nisoku/satori-log.svg)](https://www.npmjs.com/package/@nisoku/satori-log)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[Documentation](https://nisoku.github.io/Satori/docs/) | [Demo](https://nisoku.github.io/Satori/demo/) | [API Reference](https://nisoku.github.io/Satori/docs/api/core/)
+[Documentation](https://nisoku.github.io/Satori/docs/) | [Demo](https://nisoku.github.io/Satori/demo/) | [API Reference](https://nisoku.github.io/Satori/docs/api/)
 
 </div>
 
@@ -82,7 +82,7 @@ Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
 | [Causal Linking](https://nisoku.github.io/Satori/docs/guide/causal) | Event relationship tracking |
 | [Filtering](https://nisoku.github.io/Satori/docs/guide/filtering) | Query and filter events |
 | [Advanced Features](https://nisoku.github.io/Satori/docs/guide/advanced) | Rate limiting, deduplication, circuit breaker |
-| [API Reference](https://nisoku.github.io/Satori/docs/api/core) | Complete API documentation |
+| [API Reference](https://nisoku.github.io/Satori/docs/api/) | Complete API documentation |
 | [Filter Functions](https://nisoku.github.io/Satori/docs/api/filters) | Filter API reference |
 | [Examples](https://nisoku.github.io/Satori/docs/guide/examples) | Real-world usage patterns |
 
