@@ -2,14 +2,14 @@
   "name": "@nisoku/satori-log",
   "version": "0.1.0",
   "description": "Event-centric observability layer for complex apps.",
-  "main": "./dist/satori.cjs.js",
-  "module": "./dist/satori.es.js",
+  "main": "./dist/satori.js",
+  "module": "./dist/satori.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/satori.es.js",
-      "require": "./dist/satori.cjs.js"
+      "import": "./dist/satori.js",
+      "require": "./dist/satori.mjs"
     }
   },
   "files": [
