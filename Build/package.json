@@ -8,8 +8,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/satori.js",
-      "require": "./dist/satori.mjs"
+      "import": "./dist/satori.mjs",
+      "require": "./dist/satori.js"
     }
   },
   "files": [
