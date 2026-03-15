@@ -1,5 +1,5 @@
-import type { LogEntry, LogLevel } from '../core/types.js';
-import { applyAllFilters } from './filters.js';
+import type { LogEntry, LogLevel } from "../core/types.js";
+import { applyAllFilters } from "./filters.js";
 
 export class OverlayState {
   private events: LogEntry[] = [];
@@ -33,11 +33,11 @@ export class OverlayState {
 
   getSelectedEvent(): LogEntry | undefined {
     if (!this.selectedEventId) return undefined;
-    return this.events.find(event => event.id === this.selectedEventId);
+    return this.events.find((event) => event.id === this.selectedEventId);
   }
 
   getEventById(id: string): LogEntry | undefined {
-    return this.events.find(event => event.id === id);
+    return this.events.find((event) => event.id === id);
   }
 
   setLevelFilter(level?: LogLevel): void {

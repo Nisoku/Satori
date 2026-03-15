@@ -1,4 +1,9 @@
-import type { LogLevel, RateLimitConfig, DeduplicationConfig, CircuitBreakerConfig } from './types.js';
+import type {
+  LogLevel,
+  RateLimitConfig,
+  DeduplicationConfig,
+  CircuitBreakerConfig,
+} from "./types.js";
 
 export interface SatoriConfig {
   enableCallsite?: boolean;
@@ -7,48 +12,53 @@ export interface SatoriConfig {
   enableCausalLinks?: boolean;
   enableMetrics?: boolean;
   enableConsole?: boolean;
-  
-  stateSelectors?: Array<{ name?: string; selector: () => Record<string, unknown> }>;
-  
+
+  stateSelectors?: Array<{
+    name?: string;
+    selector: () => Record<string, unknown>;
+  }>;
+
   maxBufferSize?: number;
   logLevel?: LogLevel;
-  
+
   appVersion?: string;
-  
+
   pollingInterval?: number;
-  
+
   customLevels?: Array<{ name: string; severity: number; color?: string }>;
-  
+
   rateLimiting?: Partial<RateLimitConfig>;
   deduplication?: Partial<DeduplicationConfig>;
   circuitBreaker?: Partial<CircuitBreakerConfig>;
 }
 
-export type { LogLevel } from './types.js';
+export type { LogLevel } from "./types.js";
 
 export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
   enabled: false,
   maxEventsPerSecond: 1000,
   samplingRate: 0.1,
-  strategy: 'sample',
-  bufferSize: 100
+  strategy: "sample",
+  bufferSize: 100,
 };
 
 export const DEFAULT_DEDUP_CONFIG: DeduplicationConfig = {
   enabled: false,
   windowMs: 5000,
-  fields: ['message', 'scope', 'level'],
-  maxCacheSize: 1000
+  fields: ["message", "scope", "level"],
+  maxCacheSize: 1000,
 };
 
 export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerConfig = {
   enabled: false,
   failureThreshold: 5,
   resetTimeout: 30000,
-  successThreshold: 3
+  successThreshold: 3,
 };
 
-export const DEFAULT_CONFIG: Required<Omit<SatoriConfig, 'rateLimiting' | 'deduplication' | 'circuitBreaker'>> & {
+export const DEFAULT_CONFIG: Required<
+  Omit<SatoriConfig, "rateLimiting" | "deduplication" | "circuitBreaker">
+> & {
   rateLimiting: RateLimitConfig;
   deduplication: DeduplicationConfig;
   circuitBreaker: CircuitBreakerConfig;
@@ -67,5 +77,5 @@ export const DEFAULT_CONFIG: Required<Omit<SatoriConfig, 'rateLimiting' | 'dedup
   customLevels: [],
   rateLimiting: DEFAULT_RATE_LIMIT_CONFIG,
   deduplication: DEFAULT_DEDUP_CONFIG,
-  circuitBreaker: DEFAULT_CIRCUIT_BREAKER_CONFIG
+  circuitBreaker: DEFAULT_CIRCUIT_BREAKER_CONFIG,
 };

@@ -1,26 +1,32 @@
 export interface SatoriLogger {
   scope: string;
-  
+
   event(message: string, options?: LogOptions): void;
   info(message: string, options?: LogOptions): void;
   warn(message: string, options?: LogOptions): void;
   error(message: string, options?: LogOptions): void;
   debug(message: string, options?: LogOptions): void;
-  
+
   /** Log with a custom level (must be defined in config.customLevels) */
   log(level: string, message: string, options?: LogOptions): void;
-  
+
   tag(...tags: string[]): SatoriLogger;
   causedBy(messageOrEvent: string | LogEntry): SatoriLogger;
-  
+
   watch<T>(source: WatchSource<T>, label?: string): WatchHandle;
-  when<T>(source: WatchSource<T>, predicate: WhenPredicate<T>, onTrigger: WhenCallback<T>): WatchHandle;
-  
+  when<T>(
+    source: WatchSource<T>,
+    predicate: WhenPredicate<T>,
+    onTrigger: WhenCallback<T>,
+  ): WatchHandle;
+
   /** Dispose of all watchers associated with this logger */
   dispose(): void;
 }
 
-export type WatchSource<T> = (() => T) | (T & { readonly __brand: unique symbol });
+export type WatchSource<T> =
+  | (() => T)
+  | (T & { readonly __brand: unique symbol });
 export type WhenPredicate<T> = (prev: T | undefined, next: T) => boolean;
 export type WhenCallback<T> = (value: T, prev: T | undefined) => void;
 
@@ -35,7 +41,7 @@ export type LogLevel = "info" | "warn" | "error" | "debug";
 export interface CustomLogLevel {
   name: string;
   severity: number; // 0 = lowest (debug), higher = more severe
-  color?: string;   // Optional color for UI display
+  color?: string; // Optional color for UI display
 }
 
 export interface LogOptions<TState = Record<string, unknown>> {
@@ -81,14 +87,14 @@ export interface EnvironmentInfo {
   [key: string]: unknown;
 }
 
-export type RuntimePlatform = 
-  | 'browser' 
-  | 'node' 
-  | 'deno' 
-  | 'bun' 
-  | 'cloudflare-workers'
-  | 'edge'
-  | 'unknown';
+export type RuntimePlatform =
+  | "browser"
+  | "node"
+  | "deno"
+  | "bun"
+  | "cloudflare-workers"
+  | "edge"
+  | "unknown";
 
 export interface LogEntryMeta {
   __internal?: {
@@ -131,7 +137,7 @@ export interface RateLimitConfig {
   /** Sampling rate when rate limited (0-1, 1 = keep all, 0 = drop all) */
   samplingRate: number;
   /** Strategy when rate limited */
-  strategy: 'drop' | 'sample' | 'buffer';
+  strategy: "drop" | "sample" | "buffer";
   /** Buffer size when strategy is 'buffer' */
   bufferSize?: number;
 }
@@ -142,13 +148,13 @@ export interface DeduplicationConfig {
   /** Time window for deduplication in ms */
   windowMs: number;
   /** Fields to use for deduplication hash */
-  fields: Array<'message' | 'scope' | 'level' | 'tags' | 'state'>;
+  fields: Array<"message" | "scope" | "level" | "tags" | "state">;
   /** Maximum dedupe cache size */
   maxCacheSize: number;
 }
 
 /** Circuit breaker states */
-export type CircuitState = 'closed' | 'open' | 'half-open';
+export type CircuitState = "closed" | "open" | "half-open";
 
 /** Circuit breaker configuration */
 export interface CircuitBreakerConfig {
@@ -170,28 +176,28 @@ export interface SatoriConfig {
   enableMetrics?: boolean;
   /** Enable automatic console logging */
   enableConsole?: boolean;
-  
+
   stateSelectors?: Array<StateSelector>;
-  
+
   maxBufferSize?: number;
   logLevel?: LogLevel;
-  
+
   appVersion?: string;
-  
+
   pollingInterval?: number;
-  
+
   /** Custom log levels */
   customLevels?: CustomLogLevel[];
-  
+
   /** Rate limiting config */
   rateLimiting?: Partial<RateLimitConfig>;
-  
+
   /** Deduplication config */
   deduplication?: Partial<DeduplicationConfig>;
-  
+
   /** Circuit breaker for error recovery */
   circuitBreaker?: Partial<CircuitBreakerConfig>;
-  
+
   /** Persistence configuration */
   persistence?: PersistenceConfig;
 }

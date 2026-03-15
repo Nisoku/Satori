@@ -3,7 +3,7 @@
  * Tracks internal metrics for the observability system itself
  */
 
-import type { BusMetrics, SatoriMetrics, CircuitState } from '../core/types.js';
+import type { BusMetrics, SatoriMetrics, CircuitState } from "../core/types.js";
 
 export interface MetricsSnapshot {
   timestamp: number;
@@ -25,11 +25,11 @@ export class MetricsCollector {
   private watcherCount = 0;
   private subscriberCount = 0;
   private bufferSize = 0;
-  private circuitState: CircuitState = 'closed';
-  
+  private circuitState: CircuitState = "closed";
+
   // For tracking events per second
   private eventTimestamps: number[] = [];
-  
+
   // Historical snapshots for trending
   private snapshots: MetricsSnapshot[] = [];
   private maxSnapshots = 60; // Keep last 60 snapshots (e.g., 1 per second = 1 minute)
@@ -45,9 +45,9 @@ export class MetricsCollector {
     this.totalPublished++;
     const now = Date.now();
     this.eventTimestamps.push(now);
-    
+
     // Clean old timestamps (older than 1 second)
-    this.eventTimestamps = this.eventTimestamps.filter(ts => now - ts < 1000);
+    this.eventTimestamps = this.eventTimestamps.filter((ts) => now - ts < 1000);
   }
 
   /**
@@ -111,7 +111,7 @@ export class MetricsCollector {
    */
   getEventsPerSecond(): number {
     const now = Date.now();
-    this.eventTimestamps = this.eventTimestamps.filter(ts => now - ts < 1000);
+    this.eventTimestamps = this.eventTimestamps.filter((ts) => now - ts < 1000);
     return this.eventTimestamps.length;
   }
 
@@ -126,7 +126,7 @@ export class MetricsCollector {
       totalDeduplicated: this.totalDeduplicated,
       eventsPerSecond: this.getEventsPerSecond(),
       bufferSize: this.bufferSize,
-      subscriberCount: this.subscriberCount
+      subscriberCount: this.subscriberCount,
     };
   }
 
@@ -139,7 +139,7 @@ export class MetricsCollector {
       loggerCount: this.loggerCount,
       watcherCount: this.watcherCount,
       circuitState: this.circuitState,
-      uptime: Date.now() - this.startTime
+      uptime: Date.now() - this.startTime,
     };
   }
 
@@ -153,16 +153,16 @@ export class MetricsCollector {
       loggerCount: this.loggerCount,
       watcherCount: this.watcherCount,
       circuitState: this.circuitState,
-      uptime: Date.now() - this.startTime
+      uptime: Date.now() - this.startTime,
     };
-    
+
     this.snapshots.push(snapshot);
-    
+
     // Trim old snapshots
     if (this.snapshots.length > this.maxSnapshots) {
       this.snapshots = this.snapshots.slice(-this.maxSnapshots);
     }
-    
+
     return snapshot;
   }
 
@@ -178,8 +178,11 @@ export class MetricsCollector {
    */
   getAverageEventsPerSecond(): number {
     if (this.snapshots.length === 0) return 0;
-    
-    const sum = this.snapshots.reduce((acc, s) => acc + s.bus.eventsPerSecond, 0);
+
+    const sum = this.snapshots.reduce(
+      (acc, s) => acc + s.bus.eventsPerSecond,
+      0,
+    );
     return sum / this.snapshots.length;
   }
 

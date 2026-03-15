@@ -1,1 +1,1 @@
-export { DEFAULT_CONFIG, SatoriConfig } from '../core/config.js';
+export { DEFAULT_CONFIG, SatoriConfig } from "../core/config.js";

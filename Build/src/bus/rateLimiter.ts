@@ -3,7 +3,7 @@
  * Protects against log spam and high-volume scenarios
  */
 
-import type { LogEntry, RateLimitConfig } from '../core/types.js';
+import type { LogEntry, RateLimitConfig } from "../core/types.js";
 
 export class RateLimiter {
   private eventTimestamps: number[] = [];
@@ -23,12 +23,12 @@ export class RateLimiter {
     }
 
     const now = Date.now();
-    
+
     // Clean old timestamps (older than 1 second)
-    this.eventTimestamps = this.eventTimestamps.filter(ts => now - ts < 1000);
-    
+    this.eventTimestamps = this.eventTimestamps.filter((ts) => now - ts < 1000);
+
     const currentRate = this.eventTimestamps.length;
-    
+
     if (currentRate < this.config.maxEventsPerSecond) {
       // Under the limit, allow through
       this.eventTimestamps.push(now);
@@ -37,11 +37,11 @@ export class RateLimiter {
 
     // Over the limit, apply strategy
     switch (this.config.strategy) {
-      case 'drop':
+      case "drop":
         this.droppedCount++;
         return { allowed: false, sampled: false };
-        
-      case 'sample':
+
+      case "sample":
         if (Math.random() < this.config.samplingRate) {
           this.eventTimestamps.push(now);
           this.sampledCount++;
@@ -49,15 +49,15 @@ export class RateLimiter {
         }
         this.droppedCount++;
         return { allowed: false, sampled: false };
-        
-      case 'buffer':
+
+      case "buffer":
         if (this.buffer.length < (this.config.bufferSize || 100)) {
           this.buffer.push(entry);
         } else {
           this.droppedCount++;
         }
         return { allowed: false, sampled: false };
-        
+
       default:
         return { allowed: true, sampled: false };
     }
@@ -77,19 +77,24 @@ export class RateLimiter {
    */
   getCurrentRate(): number {
     const now = Date.now();
-    this.eventTimestamps = this.eventTimestamps.filter(ts => now - ts < 1000);
+    this.eventTimestamps = this.eventTimestamps.filter((ts) => now - ts < 1000);
     return this.eventTimestamps.length;
   }
 
   /**
    * Get statistics
    */
-  getStats(): { dropped: number; sampled: number; buffered: number; currentRate: number } {
+  getStats(): {
+    dropped: number;
+    sampled: number;
+    buffered: number;
+    currentRate: number;
+  } {
     return {
       dropped: this.droppedCount,
       sampled: this.sampledCount,
       buffered: this.buffer.length,
-      currentRate: this.getCurrentRate()
+      currentRate: this.getCurrentRate(),
     };
   }
 

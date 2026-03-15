@@ -1,10 +1,10 @@
 // Main exports
-export { createSatori } from './logger/createSatori.js';
-export { ScopedLogger } from './logger/scopedLogger.js';
-export { SimpleEventBus } from './bus/eventBus.js';
-export { OverlayBridge } from './overlay/bridge.js';
-export { OverlayState } from './overlay/state.js';
-export { WatcherEngine } from './watch/watcherEngine.js';
+export { createSatori } from "./logger/createSatori.js";
+export { ScopedLogger } from "./logger/scopedLogger.js";
+export { SimpleEventBus } from "./bus/eventBus.js";
+export { OverlayBridge } from "./overlay/bridge.js";
+export { OverlayState } from "./overlay/state.js";
+export { WatcherEngine } from "./watch/watcherEngine.js";
 
 // Core types
 export type {
@@ -35,42 +35,62 @@ export type {
   StateSelector,
   PersistenceConfig,
   PersistenceAdapter,
-  PersistenceReadOptions
-} from './core/types.js';
+  PersistenceReadOptions,
+} from "./core/types.js";
 
 // Config
-export { DEFAULT_CONFIG, DEFAULT_RATE_LIMIT_CONFIG, DEFAULT_DEDUP_CONFIG, DEFAULT_CIRCUIT_BREAKER_CONFIG } from './core/config.js';
+export {
+  DEFAULT_CONFIG,
+  DEFAULT_RATE_LIMIT_CONFIG,
+  DEFAULT_DEDUP_CONFIG,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+} from "./core/config.js";
 
 // Validation
-export { validateConfig, assertValidConfig } from './core/validation.js';
-export type { ValidationResult } from './core/validation.js';
+export { validateConfig, assertValidConfig } from "./core/validation.js";
+export type { ValidationResult } from "./core/validation.js";
 
 // Utilities
-export { generateId } from './core/utils/ids.js';
-export { extractCallsite } from './core/utils/stacktrace.js';
-export { now, formatTimestamp } from './core/utils/time.js';
-export { deepEqual, deepClone, computeHash } from './core/utils/deepEqual.js';
+export { generateId } from "./core/utils/ids.js";
+export { extractCallsite } from "./core/utils/stacktrace.js";
+export { now, formatTimestamp } from "./core/utils/time.js";
+export { deepEqual, deepClone, computeHash } from "./core/utils/deepEqual.js";
 
 // Metrics
-export { MetricsCollector, getGlobalMetrics, resetGlobalMetrics } from './core/metrics.js';
-export type { MetricsSnapshot } from './core/metrics.js';
+export {
+  MetricsCollector,
+  getGlobalMetrics,
+  resetGlobalMetrics,
+} from "./core/metrics.js";
+export type { MetricsSnapshot } from "./core/metrics.js";
 
 // Bus components
-export { RateLimiter } from './bus/rateLimiter.js';
-export { Deduplicator } from './bus/deduplicator.js';
-export { CircuitBreaker, CircuitOpenError } from './bus/circuitBreaker.js';
+export { RateLimiter } from "./bus/rateLimiter.js";
+export { Deduplicator } from "./bus/deduplicator.js";
+export { CircuitBreaker, CircuitOpenError } from "./bus/circuitBreaker.js";
 
-export { 
+export {
   createLevelFilter,
   createTagFilter,
   createScopeFilter,
-  createTextFilter
-} from './bus/middleware.js';
+  createTextFilter,
+} from "./bus/middleware.js";
 
 // Enrichment
-export { getEnvInfo, detectPlatform } from './enrich/env.js';
-export { captureStateSnapshot, createStateSelector, mergeSnapshots, diffSnapshots } from './enrich/stateSnapshot.js';
-export { getCausalLink, updateCausalLink, clearCausalLinks, getCausalGraph, causalGraph } from './enrich/causal.js';
+export { getEnvInfo, detectPlatform } from "./enrich/env.js";
+export {
+  captureStateSnapshot,
+  createStateSelector,
+  mergeSnapshots,
+  diffSnapshots,
+} from "./enrich/stateSnapshot.js";
+export {
+  getCausalLink,
+  updateCausalLink,
+  clearCausalLinks,
+  getCausalGraph,
+  causalGraph,
+} from "./enrich/causal.js";
 
 // Filters
 export {
@@ -92,15 +112,15 @@ export {
   groupBy,
   aggregateByTime,
   countByLevel,
-  countByScope
-} from './overlay/filters.js';
-export type { FilterOptions } from './overlay/filters.js';
+  countByScope,
+} from "./overlay/filters.js";
+export type { FilterOptions } from "./overlay/filters.js";
 
 // Persistence
-export { 
-  MemoryAdapter, 
-  LocalStorageAdapter, 
-  IndexedDBAdapter, 
+export {
+  MemoryAdapter,
+  LocalStorageAdapter,
+  IndexedDBAdapter,
   ConsoleAdapter,
-  PersistenceManager 
-} from './persistence/index.js';
+  PersistenceManager,
+} from "./persistence/index.js";

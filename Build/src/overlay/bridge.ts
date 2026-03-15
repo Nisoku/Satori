@@ -1,5 +1,5 @@
-import type { EventBus, LogEntry, LogLevel } from '../core/types.js';
-import { OverlayState } from './overlayState.js';
+import type { EventBus, LogEntry, LogLevel } from "../core/types.js";
+import { OverlayState } from "./overlayState.js";
 
 export class OverlayBridge {
   private state = new OverlayState();
@@ -81,7 +81,7 @@ export class OverlayBridge {
         scopes: this.state.getScopeFilter(),
         tags: this.state.getTagFilter(),
         text: this.state.getTextFilter(),
-      }
+      },
     };
   }
 }

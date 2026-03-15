@@ -1,13 +1,25 @@
-import type { SatoriLogger, SatoriConfig, EventBus, LogEntry, LogLevel, LogOptions, WatchSource, WhenPredicate, WhenCallback, WatchHandle, CustomLogLevel } from '../core/types.js';
-import { enrichEvent } from '../enrich/enrichEvent.js';
-import { updateCausalLink } from '../enrich/causal.js';
-import { WatcherEngine } from '../watch/watcherEngine.js';
+import type {
+  SatoriLogger,
+  SatoriConfig,
+  EventBus,
+  LogEntry,
+  LogLevel,
+  LogOptions,
+  WatchSource,
+  WhenPredicate,
+  WhenCallback,
+  WatchHandle,
+  CustomLogLevel,
+} from "../core/types.js";
+import { enrichEvent } from "../enrich/enrichEvent.js";
+import { updateCausalLink } from "../enrich/causal.js";
+import { WatcherEngine } from "../watch/watcherEngine.js";
 
 const BUILTIN_LEVELS: Record<LogLevel, number> = {
   debug: 0,
   info: 1,
   warn: 2,
-  error: 3
+  error: 3,
 };
 
 export class ScopedLogger implements SatoriLogger {
@@ -22,10 +34,10 @@ export class ScopedLogger implements SatoriLogger {
     public readonly scope: string,
     private config: SatoriConfig,
     private bus: EventBus,
-    private lastEventId?: string
+    private lastEventId?: string,
   ) {
     this.watcherEngine = new WatcherEngine(this, config);
-    
+
     // Build level severity map including custom levels
     this.levelSeverities = { ...BUILTIN_LEVELS };
     if (config.customLevels) {
@@ -36,23 +48,23 @@ export class ScopedLogger implements SatoriLogger {
   }
 
   event(message: string, options?: LogOptions): void {
-    this.log('info', message, options);
+    this.log("info", message, options);
   }
 
   info(message: string, options?: LogOptions): void {
-    this.log('info', message, options);
+    this.log("info", message, options);
   }
 
   warn(message: string, options?: LogOptions): void {
-    this.log('warn', message, options);
+    this.log("warn", message, options);
   }
 
   error(message: string, options?: LogOptions): void {
-    this.log('error', message, options);
+    this.log("error", message, options);
   }
 
   debug(message: string, options?: LogOptions): void {
-    this.log('debug', message, options);
+    this.log("debug", message, options);
   }
 
   /**
@@ -60,21 +72,23 @@ export class ScopedLogger implements SatoriLogger {
    */
   log(level: string, message: string, options?: LogOptions): void {
     if (this.disposed) {
-      console.warn(`Attempted to log on disposed logger (scope: ${this.scope})`);
+      console.warn(
+        `Attempted to log on disposed logger (scope: ${this.scope})`,
+      );
       return;
     }
 
     // Check if level is valid
     if (!(level in this.levelSeverities)) {
       console.warn(`Unknown log level: ${level}, defaulting to info`);
-      level = 'info';
+      level = "info";
     }
 
     // Check if level meets minimum threshold
-    const minLevel = this.config.logLevel || 'info';
+    const minLevel = this.config.logLevel || "info";
     const minSeverity = this.levelSeverities[minLevel] ?? 1;
     const levelSeverity = this.levelSeverities[level] ?? 1;
-    
+
     if (levelSeverity < minSeverity) {
       return; // Skip logging below minimum level
     }
@@ -90,12 +104,12 @@ export class ScopedLogger implements SatoriLogger {
         inheritedCauseEventId: this.inheritedCauseEventId,
       },
       this.config,
-      this.lastEventId
+      this.lastEventId,
     );
 
     // Update causal links with any cause event IDs
-    const causeEventIds = this.inheritedCauseEventId 
-      ? [this.inheritedCauseEventId] 
+    const causeEventIds = this.inheritedCauseEventId
+      ? [this.inheritedCauseEventId]
       : undefined;
     updateCausalLink(this.scope, entry.id, causeEventIds);
     this.lastEventId = entry.id;
@@ -104,7 +118,12 @@ export class ScopedLogger implements SatoriLogger {
   }
 
   tag(...tags: string[]): SatoriLogger {
-    const newLogger = new ScopedLogger(this.scope, this.config, this.bus, this.lastEventId);
+    const newLogger = new ScopedLogger(
+      this.scope,
+      this.config,
+      this.bus,
+      this.lastEventId,
+    );
     newLogger.inheritedTags = [...this.inheritedTags, ...tags];
     newLogger.inheritedCause = this.inheritedCause;
     newLogger.inheritedCauseEventId = this.inheritedCauseEventId;
@@ -112,29 +131,42 @@ export class ScopedLogger implements SatoriLogger {
   }
 
   causedBy(messageOrEvent: string | LogEntry): SatoriLogger {
-    const newLogger = new ScopedLogger(this.scope, this.config, this.bus, this.lastEventId);
+    const newLogger = new ScopedLogger(
+      this.scope,
+      this.config,
+      this.bus,
+      this.lastEventId,
+    );
     newLogger.inheritedTags = [...this.inheritedTags];
-    
-    if (typeof messageOrEvent === 'string') {
+
+    if (typeof messageOrEvent === "string") {
       newLogger.inheritedCause = messageOrEvent;
     } else {
       newLogger.inheritedCause = messageOrEvent.message;
       newLogger.inheritedCauseEventId = messageOrEvent.id;
     }
-    
+
     return newLogger;
   }
 
   watch<T>(source: WatchSource<T>, label?: string): WatchHandle {
     if (this.disposed) {
-      throw new Error(`Cannot create watch on disposed logger (scope: ${this.scope})`);
+      throw new Error(
+        `Cannot create watch on disposed logger (scope: ${this.scope})`,
+      );
     }
     return this.watcherEngine.watch(source, label);
   }
 
-  when<T>(source: WatchSource<T>, predicate: WhenPredicate<T>, onTrigger: WhenCallback<T>): WatchHandle {
+  when<T>(
+    source: WatchSource<T>,
+    predicate: WhenPredicate<T>,
+    onTrigger: WhenCallback<T>,
+  ): WatchHandle {
     if (this.disposed) {
-      throw new Error(`Cannot create when handler on disposed logger (scope: ${this.scope})`);
+      throw new Error(
+        `Cannot create when handler on disposed logger (scope: ${this.scope})`,
+      );
     }
     return this.watcherEngine.when(source, predicate, onTrigger);
   }

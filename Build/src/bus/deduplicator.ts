@@ -3,8 +3,8 @@
  * Prevents duplicate events within a time window
  */
 
-import type { LogEntry, DeduplicationConfig } from '../core/types.js';
-import { computeHash } from '../core/utils/deepEqual.js';
+import type { LogEntry, DeduplicationConfig } from "../core/types.js";
+import { computeHash } from "../core/utils/deepEqual.js";
 
 interface DedupEntry {
   hash: string;
@@ -23,68 +23,71 @@ export class Deduplicator {
    */
   computeDedupKey(entry: LogEntry): string {
     const parts: string[] = [];
-    
+
     for (const field of this.config.fields) {
       switch (field) {
-        case 'message':
+        case "message":
           parts.push(`m:${entry.message}`);
           break;
-        case 'scope':
+        case "scope":
           parts.push(`s:${entry.scope}`);
           break;
-        case 'level':
+        case "level":
           parts.push(`l:${entry.level}`);
           break;
-        case 'tags':
-          parts.push(`t:${entry.tags.sort().join(',')}`);
+        case "tags":
+          parts.push(`t:${entry.tags.sort().join(",")}`);
           break;
-        case 'state':
+        case "state":
           if (entry.state) {
             parts.push(`st:${computeHash(entry.state)}`);
           }
           break;
       }
     }
-    
-    return parts.join('|');
+
+    return parts.join("|");
   }
 
   /**
    * Check if an event is a duplicate
    * Returns: { isDuplicate: boolean, originalId?: string, duplicateCount: number }
    */
-  isDuplicate(entry: LogEntry): { isDuplicate: boolean; duplicateCount: number } {
+  isDuplicate(entry: LogEntry): {
+    isDuplicate: boolean;
+    duplicateCount: number;
+  } {
     if (!this.config.enabled) {
       return { isDuplicate: false, duplicateCount: 0 };
     }
 
     const now = Date.now();
     const dedupKey = this.computeDedupKey(entry);
-    
+
     // Clean expired entries
     this.cleanExpired(now);
-    
+
     const existing = this.cache.get(dedupKey);
-    
-    if (existing && (now - existing.timestamp) < this.config.windowMs) {
+
+    if (existing && now - existing.timestamp < this.config.windowMs) {
       // It's a duplicate within the window
       existing.count++;
       this.deduplicatedCount++;
       return { isDuplicate: true, duplicateCount: existing.count };
     }
-    
+
     // Not a duplicate, add to cache
     this.cache.set(dedupKey, {
       hash: dedupKey,
       timestamp: now,
-      count: 1
+      count: 1,
     });
-    
+
     // Enforce max cache size
     if (this.cache.size > this.config.maxCacheSize) {
       this.evictOldest();
     }
-    
+
     return { isDuplicate: false, duplicateCount: 1 };
   }
 
@@ -93,7 +96,7 @@ export class Deduplicator {
    */
   private cleanExpired(now: number): void {
     for (const [key, entry] of this.cache.entries()) {
-      if ((now - entry.timestamp) >= this.config.windowMs) {
+      if (now - entry.timestamp >= this.config.windowMs) {
         this.cache.delete(key);
       }
     }
@@ -105,14 +108,14 @@ export class Deduplicator {
   private evictOldest(): void {
     let oldest: string | null = null;
     let oldestTime = Infinity;
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.timestamp < oldestTime) {
         oldestTime = entry.timestamp;
         oldest = key;
       }
     }
-    
+
     if (oldest) {
       this.cache.delete(oldest);
     }
@@ -124,7 +127,7 @@ export class Deduplicator {
   getStats(): { cacheSize: number; deduplicatedCount: number } {
     return {
       cacheSize: this.cache.size,
-      deduplicatedCount: this.deduplicatedCount
+      deduplicatedCount: this.deduplicatedCount,
     };
   }
 

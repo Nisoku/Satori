@@ -3,7 +3,7 @@
  * Provides error recovery and protection for watchers and other components
  */
 
-import type { CircuitBreakerConfig, CircuitState } from '../core/types.js';
+import type { CircuitBreakerConfig, CircuitState } from "../core/types.js";
 
 export interface CircuitBreakerEvents {
   onStateChange?: (state: CircuitState, previousState: CircuitState) => void;
@@ -15,7 +15,7 @@ export interface CircuitBreakerEvents {
 }
 
 export class CircuitBreaker {
-  private state: CircuitState = 'closed';
+  private state: CircuitState = "closed";
   private failureCount = 0;
   private successCount = 0;
   private lastFailureTime = 0;
@@ -24,7 +24,7 @@ export class CircuitBreaker {
 
   constructor(
     private config: CircuitBreakerConfig,
-    private events: CircuitBreakerEvents = {}
+    private events: CircuitBreakerEvents = {},
   ) {}
 
   /**
@@ -36,7 +36,7 @@ export class CircuitBreaker {
     }
 
     if (!this.canExecute()) {
-      throw new CircuitOpenError('Circuit breaker is open');
+      throw new CircuitOpenError("Circuit breaker is open");
     }
 
     try {
@@ -44,7 +44,9 @@ export class CircuitBreaker {
       this.recordSuccess();
       return result;
     } catch (error) {
-      this.recordFailure(error instanceof Error ? error : new Error(String(error)));
+      this.recordFailure(
+        error instanceof Error ? error : new Error(String(error)),
+      );
       throw error;
     }
   }
@@ -58,7 +60,7 @@ export class CircuitBreaker {
     }
 
     if (!this.canExecute()) {
-      throw new CircuitOpenError('Circuit breaker is open');
+      throw new CircuitOpenError("Circuit breaker is open");
     }
 
     try {
@@ -66,7 +68,9 @@ export class CircuitBreaker {
       this.recordSuccess();
       return result;
     } catch (error) {
-      this.recordFailure(error instanceof Error ? error : new Error(String(error)));
+      this.recordFailure(
+        error instanceof Error ? error : new Error(String(error)),
+      );
       throw error;
     }
   }
@@ -75,14 +79,14 @@ export class CircuitBreaker {
    * Check if execution is allowed
    */
   canExecute(): boolean {
-    if (this.state === 'closed') {
+    if (this.state === "closed") {
       return true;
     }
 
-    if (this.state === 'open') {
+    if (this.state === "open") {
       // Check if enough time has passed to try half-open
       if (Date.now() - this.lastFailureTime >= this.config.resetTimeout) {
-        this.transitionTo('half-open');
+        this.transitionTo("half-open");
         return true;
       }
       return false;
@@ -99,12 +103,12 @@ export class CircuitBreaker {
     this.totalSuccesses++;
     this.events.onSuccess?.(this.successCount + 1);
 
-    if (this.state === 'half-open') {
+    if (this.state === "half-open") {
       this.successCount++;
       if (this.successCount >= this.config.successThreshold) {
-        this.transitionTo('closed');
+        this.transitionTo("closed");
       }
-    } else if (this.state === 'closed') {
+    } else if (this.state === "closed") {
       // Reset failure count on success in closed state
       this.failureCount = 0;
     }
@@ -119,12 +123,12 @@ export class CircuitBreaker {
     this.lastFailureTime = Date.now();
     this.events.onFailure?.(error, this.failureCount);
 
-    if (this.state === 'half-open') {
+    if (this.state === "half-open") {
       // Any failure in half-open goes back to open
-      this.transitionTo('open');
-    } else if (this.state === 'closed') {
+      this.transitionTo("open");
+    } else if (this.state === "closed") {
       if (this.failureCount >= this.config.failureThreshold) {
-        this.transitionTo('open');
+        this.transitionTo("open");
       }
     }
   }
@@ -137,14 +141,14 @@ export class CircuitBreaker {
     this.state = newState;
 
     // Reset counters on state change
-    if (newState === 'closed') {
+    if (newState === "closed") {
       this.failureCount = 0;
       this.successCount = 0;
       this.events.onClose?.();
-    } else if (newState === 'open') {
+    } else if (newState === "open") {
       this.successCount = 0;
       this.events.onOpen?.();
-    } else if (newState === 'half-open') {
+    } else if (newState === "half-open") {
       this.successCount = 0;
       this.events.onHalfOpen?.();
     }
@@ -176,7 +180,7 @@ export class CircuitBreaker {
       successCount: this.successCount,
       totalFailures: this.totalFailures,
       totalSuccesses: this.totalSuccesses,
-      lastFailureTime: this.lastFailureTime
+      lastFailureTime: this.lastFailureTime,
     };
   }
 
@@ -184,7 +188,7 @@ export class CircuitBreaker {
    * Manually reset the circuit breaker
    */
   reset(): void {
-    this.transitionTo('closed');
+    this.transitionTo("closed");
     this.failureCount = 0;
     this.successCount = 0;
     this.totalFailures = 0;
@@ -196,7 +200,7 @@ export class CircuitBreaker {
    * Force the circuit open (for testing/manual intervention)
    */
   forceOpen(): void {
-    this.transitionTo('open');
+    this.transitionTo("open");
     this.lastFailureTime = Date.now();
   }
 
@@ -204,7 +208,7 @@ export class CircuitBreaker {
    * Force the circuit closed (for testing/manual intervention)
    */
   forceClose(): void {
-    this.transitionTo('closed');
+    this.transitionTo("closed");
   }
 }
 
@@ -214,6 +218,6 @@ export class CircuitBreaker {
 export class CircuitOpenError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CircuitOpenError';
+    this.name = "CircuitOpenError";
   }
 }

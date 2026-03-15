@@ -1,22 +1,22 @@
-import type { 
-  EventBus, 
-  EventSubscriber, 
-  Middleware, 
-  LogEntry, 
+import type {
+  EventBus,
+  EventSubscriber,
+  Middleware,
+  LogEntry,
   BusMetrics,
   RateLimitConfig,
   DeduplicationConfig,
-  CircuitBreakerConfig
-} from '../core/types.js';
-import { RateLimiter } from './rateLimiter.js';
-import { Deduplicator } from './deduplicator.js';
-import { CircuitBreaker } from './circuitBreaker.js';
-import { MetricsCollector } from '../core/metrics.js';
-import { 
-  DEFAULT_RATE_LIMIT_CONFIG, 
-  DEFAULT_DEDUP_CONFIG, 
-  DEFAULT_CIRCUIT_BREAKER_CONFIG 
-} from '../core/config.js';
+  CircuitBreakerConfig,
+} from "../core/types.js";
+import { RateLimiter } from "./rateLimiter.js";
+import { Deduplicator } from "./deduplicator.js";
+import { CircuitBreaker } from "./circuitBreaker.js";
+import { MetricsCollector } from "../core/metrics.js";
+import {
+  DEFAULT_RATE_LIMIT_CONFIG,
+  DEFAULT_DEDUP_CONFIG,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+} from "../core/config.js";
 
 export interface EventBusConfig {
   maxBufferSize?: number;
@@ -31,7 +31,7 @@ export class SimpleEventBus implements EventBus {
   private middleware: Middleware[] = [];
   private buffer: LogEntry[] = [];
   private maxBufferSize: number;
-  
+
   private rateLimiter: RateLimiter;
   private deduplicator: Deduplicator;
   private circuitBreaker: CircuitBreaker;
@@ -40,41 +40,47 @@ export class SimpleEventBus implements EventBus {
 
   constructor(config: EventBusConfig | number = {}) {
     // Handle legacy number parameter
-    if (typeof config === 'number') {
+    if (typeof config === "number") {
       config = { maxBufferSize: config };
     }
-    
+
     this.maxBufferSize = config.maxBufferSize || 1000;
     this.enableMetrics = config.enableMetrics ?? true;
-    
+
     // Initialize components with merged configs
     this.rateLimiter = new RateLimiter({
       ...DEFAULT_RATE_LIMIT_CONFIG,
-      ...config.rateLimiting
+      ...config.rateLimiting,
     });
-    
+
     this.deduplicator = new Deduplicator({
       ...DEFAULT_DEDUP_CONFIG,
-      ...config.deduplication
+      ...config.deduplication,
     });
-    
-    this.circuitBreaker = new CircuitBreaker({
-      ...DEFAULT_CIRCUIT_BREAKER_CONFIG,
-      ...config.circuitBreaker
-    }, {
-      onStateChange: (state) => {
-        if (this.enableMetrics) {
-          this.metrics.setCircuitState(state);
-        }
-      }
-    });
-    
+
+    this.circuitBreaker = new CircuitBreaker(
+      {
+        ...DEFAULT_CIRCUIT_BREAKER_CONFIG,
+        ...config.circuitBreaker,
+      },
+      {
+        onStateChange: (state) => {
+          if (this.enableMetrics) {
+            this.metrics.setCircuitState(state);
+          }
+        },
+      },
+    );
+
     this.metrics = new MetricsCollector();
   }
 
   publish(entry: LogEntry): void {
     // Check deduplication (unless skipped)
-    if (!entry.__internal?.isReplay && !(entry as { skipDedup?: boolean }).skipDedup) {
+    if (
+      !entry.__internal?.isReplay &&
+      !(entry as { skipDedup?: boolean }).skipDedup
+    ) {
       const dedupResult = this.deduplicator.isDuplicate(entry);
       if (dedupResult.isDuplicate) {
         if (this.enableMetrics) {
@@ -83,9 +89,12 @@ export class SimpleEventBus implements EventBus {
         return;
       }
     }
-    
+
     // Check rate limiting (unless skipped)
-    if (!entry.__internal?.isReplay && !(entry as { skipRateLimit?: boolean }).skipRateLimit) {
+    if (
+      !entry.__internal?.isReplay &&
+      !(entry as { skipRateLimit?: boolean }).skipRateLimit
+    ) {
       const rateLimitResult = this.rateLimiter.shouldAllow(entry);
       if (!rateLimitResult.allowed) {
         if (this.enableMetrics) {
@@ -101,13 +110,13 @@ export class SimpleEventBus implements EventBus {
         }
       }
     }
-    
+
     // Use circuit breaker for actual publish
     try {
       this.circuitBreaker.executeSync(() => {
         this.doPublish(entry);
       });
-      
+
       if (this.enableMetrics) {
         this.metrics.recordPublished();
         this.metrics.setBufferSize(this.buffer.length);
@@ -126,7 +135,7 @@ export class SimpleEventBus implements EventBus {
 
     const runNext = () => {
       if (index >= this.middleware.length) {
-        this.subscribers.forEach(sub => sub(entry));
+        this.subscribers.forEach((sub) => sub(entry));
         this.addToBuffer(entry);
         return;
       }

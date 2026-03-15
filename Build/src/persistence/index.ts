@@ -1,7 +1,7 @@
-export { 
-  MemoryAdapter, 
-  LocalStorageAdapter, 
-  IndexedDBAdapter, 
+export {
+  MemoryAdapter,
+  LocalStorageAdapter,
+  IndexedDBAdapter,
   ConsoleAdapter,
-  PersistenceManager 
-} from './adapters.js';
+  PersistenceManager,
+} from "./adapters.js";

@@ -102,31 +102,37 @@ The demo showcases all major features:
 ## Development
 
 ### Install dependencies
+
 ```bash
 cd Build && npm install
 ```
 
 ### Run tests
+
 ```bash
 cd Build && npm test
 ```
 
 ### Run tests in watch mode
+
 ```bash
 cd Build && npm run test:watch
 ```
 
 ### Type check
+
 ```bash
 cd Build && npm run typecheck
 ```
 
 ### Build
+
 ```bash
 cd Build && npm run build
 ```
 
 ### Build docs
+
 ```bash
 cd ../Docs && npm run build
 ```
