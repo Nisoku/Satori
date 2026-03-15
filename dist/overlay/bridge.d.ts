@@ -1,4 +1,4 @@
-import type { EventBus, LogEntry, LogLevel } from '../core/types.js';
+import type { EventBus, LogEntry, LogLevel } from "../core/types.js";
 export declare class OverlayBridge {
     private eventBus;
     private state;

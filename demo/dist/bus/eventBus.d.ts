@@ -1,7 +1,7 @@
-import type { EventBus, EventSubscriber, Middleware, LogEntry, BusMetrics, RateLimitConfig, DeduplicationConfig, CircuitBreakerConfig } from '../core/types.js';
-import { RateLimiter } from './rateLimiter.js';
-import { Deduplicator } from './deduplicator.js';
-import { CircuitBreaker } from './circuitBreaker.js';
+import type { EventBus, EventSubscriber, Middleware, LogEntry, BusMetrics, RateLimitConfig, DeduplicationConfig, CircuitBreakerConfig } from "../core/types.js";
+import { RateLimiter } from "./rateLimiter.js";
+import { Deduplicator } from "./deduplicator.js";
+import { CircuitBreaker } from "./circuitBreaker.js";
 export interface EventBusConfig {
     maxBufferSize?: number;
     rateLimiting?: Partial<RateLimitConfig>;

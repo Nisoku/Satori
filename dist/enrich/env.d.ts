@@ -1,4 +1,4 @@
-import type { SatoriConfig, EnvironmentInfo, RuntimePlatform } from '../core/types.js';
+import type { SatoriConfig, EnvironmentInfo, RuntimePlatform } from "../core/types.js";
 /**
  * Detect the current runtime platform
  */

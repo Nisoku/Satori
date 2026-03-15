@@ -273,7 +273,9 @@ class I {
       const t = await e();
       return this.recordSuccess(), t;
     } catch (t) {
-      throw this.recordFailure(t instanceof Error ? t : new Error(String(t))), t;
+      throw this.recordFailure(
+        t instanceof Error ? t : new Error(String(t))
+      ), t;
     }
   }
   /**
@@ -288,7 +290,9 @@ class I {
       const t = e();
       return this.recordSuccess(), t;
     } catch (t) {
-      throw this.recordFailure(t instanceof Error ? t : new Error(String(t))), t;
+      throw this.recordFailure(
+        t instanceof Error ? t : new Error(String(t))
+      ), t;
     }
   }
   /**
@@ -493,7 +497,10 @@ class C {
    * Get average events per second over time
    */
   getAverageEventsPerSecond() {
-    return this.snapshots.length === 0 ? 0 : this.snapshots.reduce((t, i) => t + i.bus.eventsPerSecond, 0) / this.snapshots.length;
+    return this.snapshots.length === 0 ? 0 : this.snapshots.reduce(
+      (t, i) => t + i.bus.eventsPerSecond,
+      0
+    ) / this.snapshots.length;
   }
   /**
    * Reset all metrics
@@ -560,14 +567,17 @@ class R {
     }), this.deduplicator = new F({
       ...B,
       ...e.deduplication
-    }), this.circuitBreaker = new I({
-      ...E,
-      ...e.circuitBreaker
-    }, {
-      onStateChange: (t) => {
-        this.enableMetrics && this.metrics.setCircuitState(t);
+    }), this.circuitBreaker = new I(
+      {
+        ...E,
+        ...e.circuitBreaker
+      },
+      {
+        onStateChange: (t) => {
+          this.enableMetrics && this.metrics.setCircuitState(t);
+        }
       }
-    }), this.metrics = new C();
+    ), this.metrics = new C();
   }
   publish(e) {
     if (!e.__internal?.isReplay && !e.skipDedup && this.deduplicator.isDuplicate(e).isDuplicate) {
@@ -912,10 +922,7 @@ const we = {
   getStats: () => m.getStats()
 };
 function G(s, e, t) {
-  const i = O(), r = z(), n = [
-    ...s.inheritedTags || [],
-    ...s.options?.tags || []
-  ], o = {
+  const i = O(), r = z(), n = [...s.inheritedTags || [], ...s.options?.tags || []], o = {
     id: i,
     timestamp: r,
     level: s.level,
@@ -938,22 +945,28 @@ function G(s, e, t) {
 }
 class U {
   constructor(e, t) {
-    this.logger = e, this.config = t, this.circuitBreaker = new I({
-      ...E,
-      enabled: t.circuitBreaker?.enabled ?? !1,
-      ...t.circuitBreaker
-    }, {
-      onOpen: () => {
-        this.logger.warn("WatcherEngine circuit breaker opened: too many errors", {
-          tags: ["watcher", "circuit-breaker"]
-        });
+    this.logger = e, this.config = t, this.circuitBreaker = new I(
+      {
+        ...E,
+        enabled: t.circuitBreaker?.enabled ?? !1,
+        ...t.circuitBreaker
       },
-      onClose: () => {
-        this.logger.info("WatcherEngine circuit breaker closed: recovered", {
-          tags: ["watcher", "circuit-breaker"]
-        });
+      {
+        onOpen: () => {
+          this.logger.warn(
+            "WatcherEngine circuit breaker opened: too many errors",
+            {
+              tags: ["watcher", "circuit-breaker"]
+            }
+          );
+        },
+        onClose: () => {
+          this.logger.info("WatcherEngine circuit breaker closed: recovered", {
+            tags: ["watcher", "circuit-breaker"]
+          });
+        }
       }
-    });
+    );
   }
   watchers = /* @__PURE__ */ new Map();
   whenHandlers = /* @__PURE__ */ new Map();
@@ -994,12 +1007,20 @@ class U {
             n.errorCount = 0;
           });
         } catch (f) {
-          n.errorCount++, (n.errorCount <= 3 || n.errorCount % 10 === 0) && this.logger.error(`Watch error for ${t || i} (count: ${n.errorCount})`, {
-            tags: ["watch", "error"],
-            state: { error: f instanceof Error ? f.message : String(f) }
-          }), n.errorCount >= 50 && (this.logger.error(`Watch ${t || i} disposed due to repeated errors`, {
-            tags: ["watch", "error", "auto-disposed"]
-          }), this.disposeWatcher(i));
+          n.errorCount++, (n.errorCount <= 3 || n.errorCount % 10 === 0) && this.logger.error(
+            `Watch error for ${t || i} (count: ${n.errorCount})`,
+            {
+              tags: ["watch", "error"],
+              state: {
+                error: f instanceof Error ? f.message : String(f)
+              }
+            }
+          ), n.errorCount >= 50 && (this.logger.error(
+            `Watch ${t || i} disposed due to repeated errors`,
+            {
+              tags: ["watch", "error", "auto-disposed"]
+            }
+          ), this.disposeWatcher(i));
         }
     };
     o();
@@ -1028,12 +1049,20 @@ class U {
             t(l, u) && i(u, l), o.lastValue = u, o.errorCount = 0;
           });
         } catch (c) {
-          o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 === 0) && this.logger.error(`When condition error for ${r} (count: ${o.errorCount})`, {
-            tags: ["when", "error"],
-            state: { error: c instanceof Error ? c.message : String(c) }
-          }), o.errorCount >= 50 && (this.logger.error(`When handler ${r} disposed due to repeated errors`, {
-            tags: ["when", "error", "auto-disposed"]
-          }), this.disposeWhenHandler(r));
+          o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 === 0) && this.logger.error(
+            `When condition error for ${r} (count: ${o.errorCount})`,
+            {
+              tags: ["when", "error"],
+              state: {
+                error: c instanceof Error ? c.message : String(c)
+              }
+            }
+          ), o.errorCount >= 50 && (this.logger.error(
+            `When handler ${r} disposed due to repeated errors`,
+            {
+              tags: ["when", "error", "auto-disposed"]
+            }
+          ), this.disposeWhenHandler(r));
         }
     }, this.config.pollingInterval || 250);
     return o.intervalId = f, this.whenHandlers.set(r, o), {
@@ -1121,7 +1150,9 @@ class v {
    */
   log(e, t, i) {
     if (this.disposed) {
-      console.warn(`Attempted to log on disposed logger (scope: ${this.scope})`);
+      console.warn(
+        `Attempted to log on disposed logger (scope: ${this.scope})`
+      );
       return;
     }
     e in this.levelSeverities || (console.warn(`Unknown log level: ${e}, defaulting to info`), e = "info");
@@ -1144,21 +1175,35 @@ class v {
     H(this.scope, a.id, f), this.lastEventId = a.id, this.bus.publish(a);
   }
   tag(...e) {
-    const t = new v(this.scope, this.config, this.bus, this.lastEventId);
+    const t = new v(
+      this.scope,
+      this.config,
+      this.bus,
+      this.lastEventId
+    );
     return t.inheritedTags = [...this.inheritedTags, ...e], t.inheritedCause = this.inheritedCause, t.inheritedCauseEventId = this.inheritedCauseEventId, t;
   }
   causedBy(e) {
-    const t = new v(this.scope, this.config, this.bus, this.lastEventId);
+    const t = new v(
+      this.scope,
+      this.config,
+      this.bus,
+      this.lastEventId
+    );
     return t.inheritedTags = [...this.inheritedTags], typeof e == "string" ? t.inheritedCause = e : (t.inheritedCause = e.message, t.inheritedCauseEventId = e.id), t;
   }
   watch(e, t) {
     if (this.disposed)
-      throw new Error(`Cannot create watch on disposed logger (scope: ${this.scope})`);
+      throw new Error(
+        `Cannot create watch on disposed logger (scope: ${this.scope})`
+      );
     return this.watcherEngine.watch(e, t);
   }
   when(e, t, i) {
     if (this.disposed)
-      throw new Error(`Cannot create when handler on disposed logger (scope: ${this.scope})`);
+      throw new Error(
+        `Cannot create when handler on disposed logger (scope: ${this.scope})`
+      );
     return this.watcherEngine.when(e, t, i);
   }
   /**
@@ -1185,7 +1230,11 @@ function D(s) {
   const e = [], t = [];
   if (s.enableCallsite !== void 0 && typeof s.enableCallsite != "boolean" && e.push("enableCallsite must be a boolean"), s.enableEnvInfo !== void 0 && typeof s.enableEnvInfo != "boolean" && e.push("enableEnvInfo must be a boolean"), s.enableStateSnapshot !== void 0 && typeof s.enableStateSnapshot != "boolean" && e.push("enableStateSnapshot must be a boolean"), s.enableCausalLinks !== void 0 && typeof s.enableCausalLinks != "boolean" && e.push("enableCausalLinks must be a boolean"), s.stateSelectors !== void 0 && (Array.isArray(s.stateSelectors) ? s.stateSelectors.forEach((i, r) => {
     typeof i != "function" && e.push(`stateSelectors[${r}] must be a function`);
-  }) : e.push("stateSelectors must be an array")), s.maxBufferSize !== void 0 && (typeof s.maxBufferSize != "number" ? e.push("maxBufferSize must be a number") : s.maxBufferSize < 1 ? e.push("maxBufferSize must be at least 1") : s.maxBufferSize > 1e5 && t.push("maxBufferSize is very large (>100000), this may cause memory issues")), s.logLevel !== void 0 && (S.includes(s.logLevel) || e.push(`logLevel must be one of: ${S.join(", ")}`)), s.appVersion !== void 0 && typeof s.appVersion != "string" && e.push("appVersion must be a string"), s.pollingInterval !== void 0 && (typeof s.pollingInterval != "number" ? e.push("pollingInterval must be a number") : s.pollingInterval < 10 ? e.push("pollingInterval must be at least 10ms") : s.pollingInterval < 50 && t.push("pollingInterval is very low (<50ms), this may impact performance")), s.rateLimiting !== void 0)
+  }) : e.push("stateSelectors must be an array")), s.maxBufferSize !== void 0 && (typeof s.maxBufferSize != "number" ? e.push("maxBufferSize must be a number") : s.maxBufferSize < 1 ? e.push("maxBufferSize must be at least 1") : s.maxBufferSize > 1e5 && t.push(
+    "maxBufferSize is very large (>100000), this may cause memory issues"
+  )), s.logLevel !== void 0 && (S.includes(s.logLevel) || e.push(`logLevel must be one of: ${S.join(", ")}`)), s.appVersion !== void 0 && typeof s.appVersion != "string" && e.push("appVersion must be a string"), s.pollingInterval !== void 0 && (typeof s.pollingInterval != "number" ? e.push("pollingInterval must be a number") : s.pollingInterval < 10 ? e.push("pollingInterval must be at least 10ms") : s.pollingInterval < 50 && t.push(
+    "pollingInterval is very low (<50ms), this may impact performance"
+  )), s.rateLimiting !== void 0)
     if (typeof s.rateLimiting != "object" || s.rateLimiting === null)
       e.push("rateLimiting must be an object");
     else {
@@ -1203,7 +1252,9 @@ function D(s) {
         else {
           const r = ["message", "scope", "level", "tags", "state"];
           i.fields.forEach((n, o) => {
-            typeof n != "string" ? e.push(`deduplication.fields[${o}] must be a string`) : r.includes(n) || e.push(`deduplication.fields[${o}] "${n}" is not a valid field. Valid fields: ${r.join(", ")}`);
+            typeof n != "string" ? e.push(`deduplication.fields[${o}] must be a string`) : r.includes(n) || e.push(
+              `deduplication.fields[${o}] "${n}" is not a valid field. Valid fields: ${r.join(", ")}`
+            );
           });
         }
     }
@@ -1213,7 +1264,13 @@ function D(s) {
     else {
       const i = /* @__PURE__ */ new Set(), r = ["log", "event"];
       s.customLevels.forEach((n, o) => {
-        typeof n.name != "string" || n.name.trim() === "" ? e.push(`customLevels[${o}].name must be a non-empty string`) : (i.has(n.name) && e.push(`customLevels[${o}].name "${n.name}" is a duplicate`), i.add(n.name), r.includes(n.name.toLowerCase()) && e.push(`customLevels[${o}].name "${n.name}" is a reserved method name`), S.includes(n.name) && t.push(`customLevels[${o}].name "${n.name}" shadows a built-in level`)), typeof n.severity != "number" && e.push(`customLevels[${o}].severity must be a number`);
+        typeof n.name != "string" || n.name.trim() === "" ? e.push(`customLevels[${o}].name must be a non-empty string`) : (i.has(n.name) && e.push(
+          `customLevels[${o}].name "${n.name}" is a duplicate`
+        ), i.add(n.name), r.includes(n.name.toLowerCase()) && e.push(
+          `customLevels[${o}].name "${n.name}" is a reserved method name`
+        ), S.includes(n.name) && t.push(
+          `customLevels[${o}].name "${n.name}" shadows a built-in level`
+        )), typeof n.severity != "number" && e.push(`customLevels[${o}].severity must be a number`);
       });
     }
   return {
@@ -1225,9 +1282,11 @@ function D(s) {
 function Se(s) {
   const e = D(s);
   if (!e.valid)
-    throw new Error(`Invalid Satori configuration:
+    throw new Error(
+      `Invalid Satori configuration:
 ${e.errors.join(`
-`)}`);
+`)}`
+    );
 }
 class Ce {
   name = "memory";
@@ -1416,9 +1475,11 @@ class J {
 function Ie(s = {}) {
   const e = D(s);
   if (!e.valid)
-    throw new Error(`Invalid Satori configuration:
+    throw new Error(
+      `Invalid Satori configuration:
 ${e.errors.join(`
-`)}`);
+`)}`
+    );
   e.warnings.length > 0 && console.warn("Satori configuration warnings:", e.warnings);
   const t = {
     ...y,
@@ -1426,7 +1487,10 @@ ${e.errors.join(`
     // Merge nested configs properly
     rateLimiting: { ...y.rateLimiting, ...s.rateLimiting },
     deduplication: { ...y.deduplication, ...s.deduplication },
-    circuitBreaker: { ...y.circuitBreaker, ...s.circuitBreaker }
+    circuitBreaker: {
+      ...y.circuitBreaker,
+      ...s.circuitBreaker
+    }
   }, i = new R({
     maxBufferSize: t.maxBufferSize,
     rateLimiting: t.rateLimiting,
@@ -1503,7 +1567,9 @@ function ee(s, e) {
   return e.length === 0 ? s : s.filter((t) => e.some((i) => t.tags.includes(i)));
 }
 function te(s, e) {
-  return e.length === 0 ? s : s.filter((t) => e.every((i) => t.tags.includes(i)));
+  return e.length === 0 ? s : s.filter(
+    (t) => e.every((i) => t.tags.includes(i))
+  );
 }
 function se(s, e) {
   if (!e || e.trim() === "") return s;
@@ -1538,13 +1604,18 @@ function le(s, e) {
   return s.filter((t) => t.state && e in t.state);
 }
 function ke(s, e, t) {
-  return s.filter(
-    (i) => i.state && i.state[e] === t
-  );
+  return s.filter((i) => i.state && i.state[e] === t);
 }
 function ue(s, e) {
   let t = s;
-  "level" in e && e.level && (t = X(t, e.level, e.customLevels)), "scopes" in e && e.scopes && e.scopes.length > 0 && (t = Y(t, e.scopes)), "scopePattern" in e && e.scopePattern && (t = Z(t, e.scopePattern)), "tags" in e && e.tags && e.tags.length > 0 && (t = ee(t, e.tags)), "allTags" in e && e.allTags && e.allTags.length > 0 && (t = te(t, e.allTags)), "text" in e && e.text && (t = se(t, e.text)), "regex" in e && e.regex && (t = ie(t, e.regex));
+  "level" in e && e.level && (t = X(
+    t,
+    e.level,
+    e.customLevels
+  )), "scopes" in e && e.scopes && e.scopes.length > 0 && (t = Y(t, e.scopes)), "scopePattern" in e && e.scopePattern && (t = Z(
+    t,
+    e.scopePattern
+  )), "tags" in e && e.tags && e.tags.length > 0 && (t = ee(t, e.tags)), "allTags" in e && e.allTags && e.allTags.length > 0 && (t = te(t, e.allTags)), "text" in e && e.text && (t = se(t, e.text)), "regex" in e && e.regex && (t = ie(t, e.regex));
   const i = e;
   return (i.startTime || i.endTime) && (t = re(t, i.startTime, i.endTime)), i.relativeTime && (t = ne(t, i.relativeTime)), i.causeEventId && (t = oe(t, i.causeEventId)), i.hasCause && (t = ae(t)), i.stateKey && (t = le(t, i.stateKey)), i.statePredicate && (t = ce(t, i.statePredicate)), t;
 }

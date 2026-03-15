@@ -1,4 +1,4 @@
-import type { SatoriConfig, StateSelector } from '../core/types.js';
+import type { SatoriConfig, StateSelector } from "../core/types.js";
 export interface StateSnapshotResult {
     [key: string]: unknown;
 }

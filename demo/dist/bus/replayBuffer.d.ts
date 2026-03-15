@@ -1,4 +1,4 @@
-import type { LogEntry } from '../core/types.js';
+import type { LogEntry } from "../core/types.js";
 export declare class ReplayBuffer {
     private buffer;
     private maxSize;

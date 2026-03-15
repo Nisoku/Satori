@@ -1,4 +1,4 @@
-import type { SatoriLogger, SatoriConfig, EventBus, LogEntry, LogOptions, WatchSource, WhenPredicate, WhenCallback, WatchHandle } from '../core/types.js';
+import type { SatoriLogger, SatoriConfig, EventBus, LogEntry, LogOptions, WatchSource, WhenPredicate, WhenCallback, WatchHandle } from "../core/types.js";
 export declare class ScopedLogger implements SatoriLogger {
     readonly scope: string;
     private config;

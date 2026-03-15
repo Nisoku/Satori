@@ -2,7 +2,7 @@
  * Configuration validation module
  * Validates SatoriConfig to prevent runtime errors
  */
-import type { SatoriConfig } from './types.js';
+import type { SatoriConfig } from "./types.js";
 export interface ValidationResult {
     valid: boolean;
     errors: string[];

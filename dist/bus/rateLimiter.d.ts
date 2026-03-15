@@ -2,7 +2,7 @@
  * Rate Limiter implementation
  * Protects against log spam and high-volume scenarios
  */
-import type { LogEntry, RateLimitConfig } from '../core/types.js';
+import type { LogEntry, RateLimitConfig } from "../core/types.js";
 export declare class RateLimiter {
     private config;
     private eventTimestamps;

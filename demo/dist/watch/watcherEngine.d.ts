@@ -1,4 +1,4 @@
-import type { SatoriLogger, WatchSource, WhenPredicate, WhenCallback, WatchHandle, SatoriConfig } from '../core/types.js';
+import type { SatoriLogger, WatchSource, WhenPredicate, WhenCallback, WatchHandle, SatoriConfig } from "../core/types.js";
 export declare class WatcherEngine {
     private logger;
     private config;

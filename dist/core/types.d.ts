@@ -70,7 +70,7 @@ export interface EnvironmentInfo {
     bunVersion?: string;
     [key: string]: unknown;
 }
-export type RuntimePlatform = 'browser' | 'node' | 'deno' | 'bun' | 'cloudflare-workers' | 'edge' | 'unknown';
+export type RuntimePlatform = "browser" | "node" | "deno" | "bun" | "cloudflare-workers" | "edge" | "unknown";
 export interface LogEntryMeta {
     __internal?: {
         isReplay?: boolean;
@@ -107,7 +107,7 @@ export interface RateLimitConfig {
     /** Sampling rate when rate limited (0-1, 1 = keep all, 0 = drop all) */
     samplingRate: number;
     /** Strategy when rate limited */
-    strategy: 'drop' | 'sample' | 'buffer';
+    strategy: "drop" | "sample" | "buffer";
     /** Buffer size when strategy is 'buffer' */
     bufferSize?: number;
 }
@@ -117,12 +117,12 @@ export interface DeduplicationConfig {
     /** Time window for deduplication in ms */
     windowMs: number;
     /** Fields to use for deduplication hash */
-    fields: Array<'message' | 'scope' | 'level' | 'tags' | 'state'>;
+    fields: Array<"message" | "scope" | "level" | "tags" | "state">;
     /** Maximum dedupe cache size */
     maxCacheSize: number;
 }
 /** Circuit breaker states */
-export type CircuitState = 'closed' | 'open' | 'half-open';
+export type CircuitState = "closed" | "open" | "half-open";
 /** Circuit breaker configuration */
 export interface CircuitBreakerConfig {
     enabled: boolean;

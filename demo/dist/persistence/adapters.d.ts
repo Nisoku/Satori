@@ -2,7 +2,7 @@
  * Persistence Layer
  * Provides async persistence adapters for log entries
  */
-import type { LogEntry, PersistenceAdapter, PersistenceReadOptions, PersistenceConfig } from '../core/types.js';
+import type { LogEntry, PersistenceAdapter, PersistenceReadOptions, PersistenceConfig } from "../core/types.js";
 /**
  * In-memory persistence adapter (useful for testing)
  */

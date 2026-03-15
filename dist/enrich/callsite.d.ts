@@ -1,1 +1,1 @@
-export { extractCallsite } from '../core/utils/stacktrace.js';
+export { extractCallsite } from "../core/utils/stacktrace.js";

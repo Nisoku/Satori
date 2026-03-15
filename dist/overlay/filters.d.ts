@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel, CustomLogLevel } from '../core/types.js';
+import type { LogEntry, LogLevel, CustomLogLevel } from "../core/types.js";
 export declare function filterByLevel(events: LogEntry[], minLevel?: LogLevel | string, customLevels?: CustomLogLevel[]): LogEntry[];
 export declare function filterByScopes(events: LogEntry[], scopes: string[]): LogEntry[];
 export declare function filterByScopePattern(events: LogEntry[], pattern: string | RegExp): LogEntry[];

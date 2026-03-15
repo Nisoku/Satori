@@ -2,7 +2,7 @@
  * Self-Monitoring Metrics
  * Tracks internal metrics for the observability system itself
  */
-import type { BusMetrics, SatoriMetrics, CircuitState } from '../core/types.js';
+import type { BusMetrics, SatoriMetrics, CircuitState } from "../core/types.js";
 export interface MetricsSnapshot {
     timestamp: number;
     bus: BusMetrics;

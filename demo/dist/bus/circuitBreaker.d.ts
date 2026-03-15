@@ -2,7 +2,7 @@
  * Circuit Breaker implementation
  * Provides error recovery and protection for watchers and other components
  */
-import type { CircuitBreakerConfig, CircuitState } from '../core/types.js';
+import type { CircuitBreakerConfig, CircuitState } from "../core/types.js";
 export interface CircuitBreakerEvents {
     onStateChange?: (state: CircuitState, previousState: CircuitState) => void;
     onFailure?: (error: Error, failureCount: number) => void;

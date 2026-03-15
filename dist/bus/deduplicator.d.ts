@@ -2,7 +2,7 @@
  * Event Deduplication implementation
  * Prevents duplicate events within a time window
  */
-import type { LogEntry, DeduplicationConfig } from '../core/types.js';
+import type { LogEntry, DeduplicationConfig } from "../core/types.js";
 export declare class Deduplicator {
     private config;
     private cache;

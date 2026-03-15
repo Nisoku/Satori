@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel } from '../core/types.js';
+import type { LogEntry, LogLevel } from "../core/types.js";
 export declare class OverlayState {
     private events;
     private selectedEventId?;
