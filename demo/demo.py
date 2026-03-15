@@ -28,8 +28,8 @@ ASSETS_DIR = PROJECT_ROOT / "assets"
 
 def log(msg: str, level: str = "info"):
     """Print a formatted log message."""
-    symbols = {"info": "→", "success": "✓", "error": "✗", "header": "═"}
-    symbol = symbols.get(level, "→")
+    symbols = {"info": "->", "success": "✓", "error": "✗", "header": "═"}
+    symbol = symbols.get(level, "->")
     if level == "header":
         print(f"\n{'═' * 50}")
         print(f"  {msg}")
@@ -125,7 +125,7 @@ class DemoHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         status = args[1] if len(args) > 1 else ""
         if status.startswith("4") or status.startswith("5"):
-            print(f"  {args[0]} → {status}")
+            print(f"  {args[0]} -> {status}")
     
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
