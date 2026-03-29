@@ -369,15 +369,15 @@
                 <div class="main-content">
                     <p>This guide will get you up and running with Satori in just a few minutes.</p>
 <h2 id="installation">Installation</h2>
-<pre class="hljs"><code>npm install @nisoku/satori-log
+<pre class="hljs"><code>npm install @nisoku/satori
 </code></pre>
 <p>Or with yarn:</p>
-<pre class="hljs"><code>yarn add @nisoku/satori-log
+<pre class="hljs"><code>yarn add @nisoku/satori
 </code></pre>
-<p>Satori is available on <a href="https://www.npmjs.com/package/@nisoku/satori-log">NPM</a>!</p>
+<p>Satori is available on <a href="https://www.npmjs.com/package/@nisoku/satori">NPM</a>!</p>
 <h2 id="basic-usage">Basic Usage</h2>
 <h3 id="1-create-a-satori-instance">1. Create a Satori Instance</h3>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori&#x27;</span>;
 
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>();
 </code></pre>
@@ -413,7 +413,7 @@ logger.<span class="hljs-title function_">error</span>(<span class="hljs-string"
 <pre class="hljs"><code>satori.<span class="hljs-title function_">dispose</span>();
 </code></pre>
 <h2 id="complete-example">Complete Example</h2>
-<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori-log&#x27;</span>;
+<pre class="hljs"><code><span class="hljs-keyword">import</span> { createSatori } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@nisoku/satori&#x27;</span>;
 
 <span class="hljs-comment">// Initialize</span>
 <span class="hljs-keyword">const</span> satori = <span class="hljs-title function_">createSatori</span>({
