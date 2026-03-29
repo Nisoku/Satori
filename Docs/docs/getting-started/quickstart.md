@@ -8,23 +8,23 @@ This guide will get you up and running with Satori in just a few minutes.
 ## Installation
 
 ```bash
-npm install @nisoku/satori-log
+npm install @nisoku/satori
 ```
 
 Or with yarn:
 
 ```bash
-yarn add @nisoku/satori-log
+yarn add @nisoku/satori
 ```
 
-Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori)!
 
 ## Basic Usage
 
 ### 1. Create a Satori Instance
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori();
 ```
@@ -80,7 +80,7 @@ satori.dispose();
 ## Complete Example
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 // Initialize
 const satori = createSatori({

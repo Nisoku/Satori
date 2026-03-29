@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/Nisoku/Satori/actions/workflows/ci.yml/badge.svg)](https://github.com/Nisoku/Satori/actions/workflows/ci.yml)
 [![Deploy](https://github.com/Nisoku/Satori/actions/workflows/static.yml/badge.svg)](https://github.com/Nisoku/Satori/actions/workflows/static.yml)
-[![npm version](https://img.shields.io/npm/v/@nisoku/satori-log.svg)](https://www.npmjs.com/package/@nisoku/satori-log)
+[![npm version](https://img.shields.io/npm/v/@nisoku/satori.svg)](https://www.npmjs.com/package/@nisoku/satori)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [Documentation](https://nisoku.github.io/Satori/docs/) | [Demo](https://nisoku.github.io/Satori/demo/) | [API Reference](https://nisoku.github.io/Satori/docs/api/)
@@ -37,7 +37,7 @@ Satori is a powerful observability library that provides structured logging with
 ## Quick Start
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 // Create a Satori instance
 const satori = createSatori({
@@ -67,10 +67,10 @@ satori.bus.subscribe((event) => {
 ## Installation
 
 ```bash
-npm install @nisoku/satori-log
+npm install @nisoku/satori
 ```
 
-Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori)!
 
 ## Documentation
 

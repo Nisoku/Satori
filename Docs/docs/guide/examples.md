@@ -23,7 +23,7 @@ Real-world examples and patterns for using Satori.
 ### Simple Application Logging
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori({ logLevel: 'info' });
 const logger = satori.createLogger('app');
@@ -87,7 +87,7 @@ function login(username: string) {
 ```typescript
 // useSatoriLogger.ts
 import { useEffect, useRef, useMemo } from 'react';
-import { createSatori, SatoriLogger } from '@nisoku/satori-log';
+import { createSatori, SatoriLogger } from '@nisoku/satori';
 
 // Create a single Satori instance
 const satori = createSatori({
@@ -186,7 +186,7 @@ function ShoppingCart() {
 
 ```typescript
 import express from 'express';
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori({
   rateLimit: { enabled: true, maxEventsPerSecond: 1000 }
@@ -265,7 +265,7 @@ app.use(errorHandler);
 
 ```typescript
 // satoriMiddleware.ts
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori();
 const logger = satori.createLogger('redux');
@@ -302,7 +302,7 @@ export const satoriMiddleware = store => next => action => {
 
 ```typescript
 import create from 'zustand';
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori();
 const logger = satori.createLogger('store');
@@ -387,7 +387,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 ```typescript
 import { Component, ErrorInfo } from 'react';
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori();
 const errorLogger = satori.createLogger('react.error');

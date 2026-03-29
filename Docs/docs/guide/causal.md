@@ -46,7 +46,7 @@ logger.info('Analytics tracked', { cause: paymentId });
 Satori maintains a causal graph for querying relationships:
 
 ```typescript
-import { CausalGraph } from '@nisoku/satori-log';
+import { CausalGraph } from '@nisoku/satori';
 
 const graph = new CausalGraph();
 

@@ -30,7 +30,7 @@ Query events by level, scope, tags, time range, and more.
 ## Quick Example
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori();
 const logger = satori.createLogger('myApp');
@@ -55,10 +55,10 @@ satori.bus.subscribe((event) => {
 ## Installation
 
 ```bash
-npm install @nisoku/satori-log
+npm install @nisoku/satori
 ```
 
-Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori-log)!
+Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori)!
 
 ## Next Steps
 

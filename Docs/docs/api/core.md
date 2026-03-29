@@ -60,7 +60,7 @@ unsubscribe();
 ### Example
 
 ```typescript
-import { createSatori } from '@nisoku/satori-log';
+import { createSatori } from '@nisoku/satori';
 
 const satori = createSatori({
   logLevel: 'debug',

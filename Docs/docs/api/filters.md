@@ -184,7 +184,7 @@ import {
   filterByScope, 
   filterByTimeRange,
   filterByTags 
-} from '@nisoku/satori-log';
+} from '@nisoku/satori';
 
 let results = satori.getEvents();
 

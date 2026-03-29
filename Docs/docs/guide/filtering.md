@@ -10,7 +10,7 @@ Satori provides comprehensive filtering functions to query events by level, scop
 ### Filter by Level
 
 ```typescript
-import { filterByLevel } from '@nisoku/satori-log';
+import { filterByLevel } from '@nisoku/satori';
 
 const events = satori.getEvents();
 
@@ -22,7 +22,7 @@ const debugAndAbove = filterByLevel(events, 'debug');
 ### Filter by Scope
 
 ```typescript
-import { filterByScope } from '@nisoku/satori-log';
+import { filterByScope } from '@nisoku/satori';
 
 // Exact match
 const authEvents = filterByScope(events, 'auth');
@@ -35,7 +35,7 @@ const apiEvents = filterByScope(events, 'api', { prefix: true });
 ### Filter by Tags
 
 ```typescript
-import { filterByTag, filterByTags } from '@nisoku/satori-log';
+import { filterByTag, filterByTags } from '@nisoku/satori';
 
 // Single tag
 const securityEvents = filterByTag(events, 'security');
@@ -50,7 +50,7 @@ const userOrAdmin = filterByTags(events, ['user', 'admin'], { match: 'any' });
 ### Filter by Time Range
 
 ```typescript
-import { filterByTimeRange } from '@nisoku/satori-log';
+import { filterByTimeRange } from '@nisoku/satori';
 
 const now = Date.now();
 const oneHourAgo = now - (60 * 60 * 1000);
@@ -75,7 +75,7 @@ import {
   filterByLevel, 
   filterByScope, 
   filterByTimeRange 
-} from '@nisoku/satori-log';
+} from '@nisoku/satori';
 
 let results = satori.getEvents();
 
@@ -94,7 +94,7 @@ console.log(`Found ${results.length} auth errors in the last hour`);
 ### Filter by State
 
 ```typescript
-import { filterByState } from '@nisoku/satori-log';
+import { filterByState } from '@nisoku/satori';
 
 // Find events where userId matches
 const userEvents = filterByState(events, { userId: '123' });
@@ -108,7 +108,7 @@ const adminEvents = filterByState(events, {
 ### Filter by Message Pattern
 
 ```typescript
-import { filterByMessage } from '@nisoku/satori-log';
+import { filterByMessage } from '@nisoku/satori';
 
 // Substring match
 const loginEvents = filterByMessage(events, 'login');
@@ -120,7 +120,7 @@ const errorPatterns = filterByMessage(events, /error|fail|exception/i);
 ### Filter by Cause
 
 ```typescript
-import { filterByCause } from '@nisoku/satori-log';
+import { filterByCause } from '@nisoku/satori';
 
 // Find all events caused by a specific event
 const effects = filterByCause(events, 'evt_12345');
