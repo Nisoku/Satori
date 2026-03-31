@@ -52,6 +52,7 @@ module.exports = {
       icon: 'book-open',
       collapsible: false,
       children: [
+        { title: 'Overview', path: '/guide/', icon: 'book' },
         { title: 'State Watching', path: '/guide/watching', icon: 'eye' },
         { title: 'Causal Linking', path: '/guide/causal', icon: 'git-branch' },
         { title: 'Filtering Events', path: '/guide/filtering', icon: 'filter' },
