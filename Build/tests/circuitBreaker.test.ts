@@ -1,3 +1,4 @@
+import { describe, test, expect, it } from '@jest/globals';
 import { CircuitBreaker, CircuitOpenError } from '../src/bus/circuitBreaker';
 import type { CircuitBreakerConfig } from '../src/core/types';
 

@@ -2,6 +2,7 @@
  * Watcher Engine tests
  */
 
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { WatcherEngine } from '../src/watch/watcherEngine';
 import type { SatoriLogger, SatoriConfig, LogOptions, LogEntry, WatchHandle } from '../src/core/types';
 import { DEFAULT_CONFIG } from '../src/core/config';

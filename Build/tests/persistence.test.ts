@@ -2,6 +2,7 @@
  * Persistence adapter tests
  */
 
+import { describe, test, expect, jest, afterEach, beforeEach, it } from '@jest/globals';
 import { MemoryAdapter, ConsoleAdapter } from '../src/persistence/adapters';
 import type { LogEntry } from '../src/core/types';
 
@@ -141,14 +142,14 @@ describe('MemoryAdapter', () => {
 
 describe('ConsoleAdapter', () => {
   let adapter: ConsoleAdapter;
-  let consoleInfoSpy: jest.SpyInstance;
-  let consoleWarnSpy: jest.SpyInstance;
-  let consoleErrorSpy: jest.SpyInstance;
+  let consoleInfoSpy: ReturnType<typeof jest.spyOn>;
+  let consoleWarnSpy: ReturnType<typeof jest.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
-    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     adapter = new ConsoleAdapter();
   });
 

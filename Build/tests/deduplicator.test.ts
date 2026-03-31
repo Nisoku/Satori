@@ -1,3 +1,4 @@
+import { describe, test, expect, it } from '@jest/globals';
 import { Deduplicator } from '../src/bus/deduplicator';
 import type { LogEntry, DeduplicationConfig } from '../src/core/types';
 

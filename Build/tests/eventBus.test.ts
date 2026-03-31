@@ -1,3 +1,4 @@
+import { describe, test, expect, it } from '@jest/globals';
 import { SimpleEventBus } from '../src/bus/eventBus';
 import type { LogEntry } from '../src/core/types';
 

@@ -1,3 +1,4 @@
+import { describe, test, expect, it } from '@jest/globals';
 import { RateLimiter } from '../src/bus/rateLimiter';
 import type { LogEntry, RateLimitConfig } from '../src/core/types';
 

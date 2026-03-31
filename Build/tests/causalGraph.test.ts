@@ -2,6 +2,7 @@
  * Causal Graph tests
  */
 
+import { describe, test, expect, it, beforeEach } from '@jest/globals';
 import { CausalGraph, updateCausalLink, getCausalLink, clearCausalLinks } from '../src/enrich/causal';
 
 describe('CausalGraph', () => {

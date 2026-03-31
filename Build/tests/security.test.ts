@@ -1,3 +1,4 @@
+import { describe, test, expect, it, afterEach, beforeEach } from '@jest/globals';
 import { createSatori } from '../src/logger/createSatori';
 import type { LogEntry } from '../src/core/types';
 

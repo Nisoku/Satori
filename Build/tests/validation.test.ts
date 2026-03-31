@@ -1,3 +1,4 @@
+import { describe, test, expect, it } from '@jest/globals';
 import { validateConfig, assertValidConfig } from '../src/core/validation';
 
 describe('Configuration Validation', () => {

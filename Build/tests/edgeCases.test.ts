@@ -1,7 +1,4 @@
-/**
- * Edge case tests for Satori
- */
-
+import { describe, test, expect, it } from '@jest/globals';
 import { deepEqual, deepClone, computeHash } from '../src/core/utils/deepEqual';
 import { RateLimiter } from '../src/bus/rateLimiter';
 import { Deduplicator } from '../src/bus/deduplicator';
