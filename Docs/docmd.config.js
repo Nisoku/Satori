@@ -1,10 +1,8 @@
 // docmd.config.js
 module.exports = {
-  // --- Core Metadata ---
   siteTitle: 'Satori',
-  siteUrl: 'https://nisoku.github.io/Satori/docs',
+  siteUrl: 'https://nisoku.org/Satori/docs',
 
-  // --- Branding ---
   logo: {
     light: 'assets/images/satori-logo-light.svg',
     dark: 'assets/images/satori-logo-dark.svg',
@@ -13,11 +11,9 @@ module.exports = {
   },
   favicon: 'assets/icons/favicon.svg',
 
-  // --- Source & Output ---
   srcDir: 'docs',
   outputDir: 'site',
 
-  // --- Theme & Layout ---
   theme: {
     name: 'ruby',
     defaultMode: 'system',
@@ -27,17 +23,15 @@ module.exports = {
     customCss: [],
   },
 
-  // --- Features ---
   search: true,
   minify: true,
   autoTitleFromH1: true,
   copyCode: true,
   pageNavigation: true,
 
-  // --- Navigation (Sidebar) ---
   navigation: [
     { title: 'Home', path: '/', icon: 'home' },
-    { title: 'Interactive Demo', path: 'https://nisoku.github.io/Satori/demo/', icon: 'play-circle', external: true },
+    { title: 'Interactive Demo', path: 'https://nisoku.org/Satori/demo/', icon: 'play-circle', external: true },
     {
       title: 'Getting Started',
       icon: 'rocket',
@@ -72,7 +66,6 @@ module.exports = {
     { title: 'GitHub', path: 'https://github.com/Nisoku/Satori', icon: 'github', external: true },
   ],
 
-  // --- Plugins ---
   plugins: {
     seo: {
       defaultDescription: 'Observable event logging library for JavaScript and TypeScript. Structured logging with state watching, causal linking, and advanced filtering.',
@@ -83,21 +76,14 @@ module.exports = {
         cardType: 'summary_large_image',
       }
     },
-    // analytics: {
-    //   googleV4: {
-    //     measurementId: 'G-X9WTDL262N' // Replace with your Google Analytics Measurement ID
-    //   }
-    // },
     sitemap: {
       defaultChangefreq: 'weekly',
       defaultPriority: 0.8
     }
   },
 
-  // --- Footer ---
   footer: 'Built with [docmd](https://docmd.io). [View on GitHub](https://github.com/Nisoku/Satori).',
 
-  // --- Edit Link ---
   editLink: {
     enabled: true,
     baseUrl: 'https://github.com/Nisoku/Satori/edit/main/Docs/docs',

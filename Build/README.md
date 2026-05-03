@@ -11,7 +11,7 @@
 [![npm version](https://img.shields.io/npm/v/@nisoku/satori.svg)](https://www.npmjs.com/package/@nisoku/satori)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[Documentation](https://nisoku.github.io/Satori/docs/) | [Demo](https://nisoku.github.io/Satori/demo/) | [API Reference](https://nisoku.github.io/Satori/docs/api/)
+[Documentation](https://nisoku.org/Satori/docs/) | [Demo](https://nisoku.org/Satori/demo/) | [API Reference](https://nisoku.org/Satori/docs/api/)
 
 </div>
 
@@ -76,19 +76,19 @@ Satori is available on [NPM](https://www.npmjs.com/package/@nisoku/satori)!
 
 | Section | Description |
 | --------- | ------------- |
-| [Quick Start](https://nisoku.github.io/Satori/docs/getting-started/quickstart) | Get up and running in 5 minutes |
-| [Configuration](https://nisoku.github.io/Satori/docs/getting-started/configuration) | Complete configuration options |
-| [State Watching](https://nisoku.github.io/Satori/docs/guide/watching) | Automatic change detection |
-| [Causal Linking](https://nisoku.github.io/Satori/docs/guide/causal) | Event relationship tracking |
-| [Filtering](https://nisoku.github.io/Satori/docs/guide/filtering) | Query and filter events |
-| [Advanced Features](https://nisoku.github.io/Satori/docs/guide/advanced) | Rate limiting, deduplication, circuit breaker |
-| [API Reference](https://nisoku.github.io/Satori/docs/api/) | Complete API documentation |
-| [Filter Functions](https://nisoku.github.io/Satori/docs/api/filters) | Filter API reference |
-| [Examples](https://nisoku.github.io/Satori/docs/guide/examples) | Real-world usage patterns |
+| [Quick Start](https://nisoku.org/Satori/docs/getting-started/quickstart) | Get up and running in 5 minutes |
+| [Configuration](https://nisoku.org/Satori/docs/getting-started/configuration) | Complete configuration options |
+| [State Watching](https://nisoku.org/Satori/docs/guide/watching) | Automatic change detection |
+| [Causal Linking](https://nisoku.org/Satori/docs/guide/causal) | Event relationship tracking |
+| [Filtering](https://nisoku.org/Satori/docs/guide/filtering) | Query and filter events |
+| [Advanced Features](https://nisoku.org/Satori/docs/guide/advanced) | Rate limiting, deduplication, circuit breaker |
+| [API Reference](https://nisoku.org/Satori/docs/api/) | Complete API documentation |
+| [Filter Functions](https://nisoku.org/Satori/docs/api/filters) | Filter API reference |
+| [Examples](https://nisoku.org/Satori/docs/guide/examples) | Real-world usage patterns |
 
 ## Demo
 
-Open the live [demo](https://nisoku.github.io/Satori/demo/) in a browser to see Satori in action with an interactive playground.
+Open the live [demo](https://nisoku.org/Satori/demo/) in a browser to see Satori in action with an interactive playground.
 
 The demo showcases all major features:
 
