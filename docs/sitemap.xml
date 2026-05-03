@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/api/core/</loc>
+    <loc>https://nisoku.org/Satori/docs/api/core/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/api/filters/</loc>
+    <loc>https://nisoku.org/Satori/docs/api/filters/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/api/</loc>
+    <loc>https://nisoku.org/Satori/docs/api/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/getting-started/configuration/</loc>
+    <loc>https://nisoku.org/Satori/docs/getting-started/configuration/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/getting-started/quickstart/</loc>
+    <loc>https://nisoku.org/Satori/docs/getting-started/quickstart/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/advanced/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/advanced/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/causal/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/causal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/examples/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/examples/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/filtering/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/filtering/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/guide/watching/</loc>
+    <loc>https://nisoku.org/Satori/docs/guide/watching/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://nisoku.github.io/Satori/docs/</loc>
+    <loc>https://nisoku.org/Satori/docs/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
