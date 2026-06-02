@@ -34,7 +34,6 @@ export default {
     {
       title: "Getting Started",
       icon: "rocket",
-      collapsible: false,
       children: [
         {
           title: "Quick Start",
@@ -51,7 +50,6 @@ export default {
     {
       title: "Guide",
       icon: "book-open",
-      collapsible: false,
       children: [
         {
           title: "Overview",
@@ -88,7 +86,6 @@ export default {
     {
       title: "API Reference",
       icon: "file-code",
-      collapsible: false,
       children: [
         {
           title: "Core API",
