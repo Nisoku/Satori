@@ -1,1867 +1,1495 @@
-class M {
-  constructor(e) {
-    this.config = e;
-  }
-  eventTimestamps = [];
-  buffer = [];
-  droppedCount = 0;
-  sampledCount = 0;
-  /**
-   * Check if an event should be allowed through
-   * Returns: { allowed: boolean, sampled?: boolean }
-   */
-  shouldAllow(e) {
-    if (!this.config.enabled)
-      return { allowed: !0, sampled: !1 };
-    const t = Date.now();
-    if (this.eventTimestamps = this.eventTimestamps.filter((r) => t - r < 1e3), this.eventTimestamps.length < this.config.maxEventsPerSecond)
-      return this.eventTimestamps.push(t), { allowed: !0, sampled: !1 };
-    switch (this.config.strategy) {
-      case "drop":
-        return this.droppedCount++, { allowed: !1, sampled: !1 };
-      case "sample":
-        return Math.random() < this.config.samplingRate ? (this.eventTimestamps.push(t), this.sampledCount++, { allowed: !0, sampled: !0 }) : (this.droppedCount++, { allowed: !1, sampled: !1 });
-      case "buffer":
-        return this.buffer.length < (this.config.bufferSize || 100) ? this.buffer.push(e) : this.droppedCount++, { allowed: !1, sampled: !1 };
-      default:
-        return { allowed: !0, sampled: !1 };
-    }
-  }
-  /**
-   * Get buffered events and clear the buffer
-   */
-  flushBuffer() {
-    const e = [...this.buffer];
-    return this.buffer = [], e;
-  }
-  /**
-   * Get current rate (events per second)
-   */
-  getCurrentRate() {
-    const e = Date.now();
-    return this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3), this.eventTimestamps.length;
-  }
-  /**
-   * Get statistics
-   */
-  getStats() {
-    return {
-      dropped: this.droppedCount,
-      sampled: this.sampledCount,
-      buffered: this.buffer.length,
-      currentRate: this.getCurrentRate()
-    };
-  }
-  /**
-   * Reset statistics
-   */
-  reset() {
-    this.eventTimestamps = [], this.buffer = [], this.droppedCount = 0, this.sampledCount = 0;
-  }
-  /**
-   * Update configuration
-   */
-  updateConfig(e) {
-    this.config = { ...this.config, ...e };
-  }
-}
-function g(s, e, t = /* @__PURE__ */ new WeakMap()) {
-  if (s === e) return !0;
-  if (typeof s == "number" && typeof e == "number")
-    return Number.isNaN(s) && Number.isNaN(e) ? !0 : s === e;
-  if (s === null || e === null || s === void 0 || e === void 0) return s === e;
-  if (typeof s != typeof e || typeof s != "object") return !1;
-  const i = s, r = e;
-  if (t.has(i))
-    return t.get(i) === r;
-  if (t.set(i, r), s instanceof Date && e instanceof Date)
-    return s.getTime() === e.getTime();
-  if (s instanceof Date || e instanceof Date) return !1;
-  if (s instanceof RegExp && e instanceof RegExp)
-    return s.source === e.source && s.flags === e.flags;
-  if (s instanceof RegExp || e instanceof RegExp) return !1;
-  if (s instanceof Map && e instanceof Map) {
-    if (s.size !== e.size) return !1;
-    for (const [c, l] of s)
-      if (!e.has(c) || !g(l, e.get(c), t)) return !1;
-    return !0;
-  }
-  if (s instanceof Map || e instanceof Map) return !1;
-  if (s instanceof Set && e instanceof Set) {
-    if (s.size !== e.size) return !1;
-    const c = Array.from(s), l = Array.from(e);
-    for (const u of c) {
-      let d = !1;
-      for (const h of l)
-        if (g(u, h, t)) {
-          d = !0;
-          break;
-        }
-      if (!d) return !1;
-    }
-    return !0;
-  }
-  if (s instanceof Set || e instanceof Set) return !1;
-  if (Array.isArray(s) && Array.isArray(e)) {
-    if (s.length !== e.length) return !1;
-    const c = Object.keys(s).filter((h) => /^\d+$/.test(h)).map(Number), l = Object.keys(e).filter((h) => /^\d+$/.test(h)).map(Number);
-    if (c.length !== l.length) return !1;
-    for (const h of c)
-      if (!l.includes(h)) return !1;
-    for (let h = 0; h < s.length; h++) {
-      const T = Object.prototype.hasOwnProperty.call(s, h), $ = Object.prototype.hasOwnProperty.call(e, h);
-      if (T !== $ || T && !g(s[h], e[h], t)) return !1;
-    }
-    const u = Object.keys(s).filter((h) => !/^\d+$/.test(h)), d = Object.keys(e).filter((h) => !/^\d+$/.test(h));
-    if (u.length !== d.length) return !1;
-    for (const h of u)
-      if (!Object.prototype.hasOwnProperty.call(e, h) || !g(s[h], e[h], t)) return !1;
-    return !0;
-  }
-  if (Array.isArray(s) !== Array.isArray(e)) return !1;
-  const n = s, o = e, a = Object.keys(n), f = Object.keys(o);
-  if (a.length !== f.length) return !1;
-  for (const c of a)
-    if (!Object.prototype.hasOwnProperty.call(o, c) || !g(n[c], o[c], t)) return !1;
-  return !0;
-}
-function p(s, e = /* @__PURE__ */ new WeakMap()) {
-  if (s == null || typeof s != "object") return s;
-  const t = s;
-  if (e.has(t))
-    return e.get(t);
-  if (s instanceof Date)
-    return new Date(s.getTime());
-  if (s instanceof RegExp)
-    return new RegExp(s.source, s.flags);
-  if (s instanceof Map) {
-    const r = /* @__PURE__ */ new Map();
-    e.set(t, r);
-    for (const [n, o] of s)
-      r.set(p(n, e), p(o, e));
-    return r;
-  }
-  if (s instanceof Set) {
-    const r = /* @__PURE__ */ new Set();
-    e.set(t, r);
-    for (const n of s)
-      r.add(p(n, e));
-    return r;
-  }
-  if (Array.isArray(s)) {
-    const r = [];
-    e.set(t, r);
-    for (let n = 0; n < s.length; n++)
-      Object.prototype.hasOwnProperty.call(s, n) && (r[n] = p(s[n], e));
-    for (const n of Object.keys(s))
-      /^\d+$/.test(n) || (r[n] = p(s[n], e));
-    return r;
-  }
-  const i = {};
-  e.set(t, i);
-  for (const r of Object.keys(s))
-    i[r] = p(s[r], e);
-  return i;
-}
-function b(s, e = /* @__PURE__ */ new WeakSet()) {
-  return s === null ? "null" : s === void 0 ? "undefined" : typeof s == "string" ? `s:${s}` : typeof s == "number" ? Number.isNaN(s) ? "n:NaN" : `n:${s}` : typeof s == "boolean" ? `b:${s}` : typeof s != "object" ? String(s) : e.has(s) ? "[Circular]" : (e.add(s), s instanceof Date ? `d:${s.getTime()}` : s instanceof RegExp ? `r:${s.source}:${s.flags}` : s instanceof Map ? `m:{${Array.from(s.entries()).map(([r, n]) => `${b(r, e)}=>${b(n, e)}`).sort().join(",")}}` : s instanceof Set ? `set:{${Array.from(s).map((r) => b(r, e)).sort().join(",")}}` : Array.isArray(s) ? `a:[${s.map((r, n) => Object.prototype.hasOwnProperty.call(s, n) ? b(r, e) : "<empty>").join(",")}]` : `o:{${Object.entries(s).sort(([i], [r]) => i.localeCompare(r)).map(([i, r]) => `${i}:${b(r, e)}`).join(",")}}`);
-}
-class F {
-  constructor(e) {
-    this.config = e;
-  }
-  cache = /* @__PURE__ */ new Map();
-  deduplicatedCount = 0;
-  /**
-   * Compute a deduplication key for an entry based on configured fields
-   */
-  computeDedupKey(e) {
-    const t = [];
-    for (const i of this.config.fields)
-      switch (i) {
-        case "message":
-          t.push(`m:${e.message}`);
-          break;
-        case "scope":
-          t.push(`s:${e.scope}`);
-          break;
-        case "level":
-          t.push(`l:${e.level}`);
-          break;
-        case "tags":
-          t.push(`t:${e.tags.sort().join(",")}`);
-          break;
-        case "state":
-          e.state && t.push(`st:${b(e.state)}`);
-          break;
-      }
-    return t.join("|");
-  }
-  /**
-   * Check if an event is a duplicate
-   * Returns: { isDuplicate: boolean, originalId?: string, duplicateCount: number }
-   */
-  isDuplicate(e) {
-    if (!this.config.enabled)
-      return { isDuplicate: !1, duplicateCount: 0 };
-    const t = Date.now(), i = this.computeDedupKey(e);
-    this.cleanExpired(t);
-    const r = this.cache.get(i);
-    return r && t - r.timestamp < this.config.windowMs ? (r.count++, this.deduplicatedCount++, { isDuplicate: !0, duplicateCount: r.count }) : (this.cache.set(i, {
-      hash: i,
-      timestamp: t,
-      count: 1
-    }), this.cache.size > this.config.maxCacheSize && this.evictOldest(), { isDuplicate: !1, duplicateCount: 1 });
-  }
-  /**
-   * Clean expired entries from cache
-   */
-  cleanExpired(e) {
-    for (const [t, i] of this.cache.entries())
-      e - i.timestamp >= this.config.windowMs && this.cache.delete(t);
-  }
-  /**
-   * Evict oldest entries when cache is full
-   */
-  evictOldest() {
-    let e = null, t = 1 / 0;
-    for (const [i, r] of this.cache.entries())
-      r.timestamp < t && (t = r.timestamp, e = i);
-    e && this.cache.delete(e);
-  }
-  /**
-   * Get statistics
-   */
-  getStats() {
-    return {
-      cacheSize: this.cache.size,
-      deduplicatedCount: this.deduplicatedCount
-    };
-  }
-  /**
-   * Reset the deduplicator
-   */
-  reset() {
-    this.cache.clear(), this.deduplicatedCount = 0;
-  }
-  /**
-   * Update configuration
-   */
-  updateConfig(e) {
-    this.config = { ...this.config, ...e };
-  }
-}
-class I {
-  constructor(e, t = {}) {
-    this.config = e, this.events = t;
-  }
-  state = "closed";
-  failureCount = 0;
-  successCount = 0;
-  lastFailureTime = 0;
-  totalFailures = 0;
-  totalSuccesses = 0;
-  /**
-   * Execute a function with circuit breaker protection
-   */
-  async execute(e) {
-    if (!this.config.enabled)
-      return e();
-    if (!this.canExecute())
-      throw new L("Circuit breaker is open");
-    try {
-      const t = await e();
-      return this.recordSuccess(), t;
-    } catch (t) {
-      throw this.recordFailure(
-        t instanceof Error ? t : new Error(String(t))
-      ), t;
-    }
-  }
-  /**
-   * Execute synchronously with circuit breaker protection
-   */
-  executeSync(e) {
-    if (!this.config.enabled)
-      return e();
-    if (!this.canExecute())
-      throw new L("Circuit breaker is open");
-    try {
-      const t = e();
-      return this.recordSuccess(), t;
-    } catch (t) {
-      throw this.recordFailure(
-        t instanceof Error ? t : new Error(String(t))
-      ), t;
-    }
-  }
-  /**
-   * Check if execution is allowed
-   */
-  canExecute() {
-    return this.state === "closed" ? !0 : this.state === "open" ? Date.now() - this.lastFailureTime >= this.config.resetTimeout ? (this.transitionTo("half-open"), !0) : !1 : !0;
-  }
-  /**
-   * Record a successful execution
-   */
-  recordSuccess() {
-    this.totalSuccesses++, this.events.onSuccess?.(this.successCount + 1), this.state === "half-open" ? (this.successCount++, this.successCount >= this.config.successThreshold && this.transitionTo("closed")) : this.state === "closed" && (this.failureCount = 0);
-  }
-  /**
-   * Record a failed execution
-   */
-  recordFailure(e) {
-    this.totalFailures++, this.failureCount++, this.lastFailureTime = Date.now(), this.events.onFailure?.(e, this.failureCount), this.state === "half-open" ? this.transitionTo("open") : this.state === "closed" && this.failureCount >= this.config.failureThreshold && this.transitionTo("open");
-  }
-  /**
-   * Transition to a new state
-   */
-  transitionTo(e) {
-    const t = this.state;
-    this.state = e, e === "closed" ? (this.failureCount = 0, this.successCount = 0, this.events.onClose?.()) : e === "open" ? (this.successCount = 0, this.events.onOpen?.()) : e === "half-open" && (this.successCount = 0, this.events.onHalfOpen?.()), this.events.onStateChange?.(e, t);
-  }
-  /**
-   * Get current state
-   */
-  getState() {
-    return this.state;
-  }
-  /**
-   * Get statistics
-   */
-  getStats() {
-    return {
-      state: this.state,
-      failureCount: this.failureCount,
-      successCount: this.successCount,
-      totalFailures: this.totalFailures,
-      totalSuccesses: this.totalSuccesses,
-      lastFailureTime: this.lastFailureTime
-    };
-  }
-  /**
-   * Manually reset the circuit breaker
-   */
-  reset() {
-    this.transitionTo("closed"), this.failureCount = 0, this.successCount = 0, this.totalFailures = 0, this.totalSuccesses = 0, this.lastFailureTime = 0;
-  }
-  /**
-   * Force the circuit open (for testing/manual intervention)
-   */
-  forceOpen() {
-    this.transitionTo("open"), this.lastFailureTime = Date.now();
-  }
-  /**
-   * Force the circuit closed (for testing/manual intervention)
-   */
-  forceClose() {
-    this.transitionTo("closed");
-  }
-}
-class L extends Error {
-  constructor(e) {
-    super(e), this.name = "CircuitOpenError";
-  }
-}
-class C {
-  startTime;
-  totalPublished = 0;
-  totalDropped = 0;
-  totalSampled = 0;
-  totalDeduplicated = 0;
-  recentEvents = [];
-  loggerCount = 0;
-  watcherCount = 0;
-  subscriberCount = 0;
-  bufferSize = 0;
-  circuitState = "closed";
-  // For tracking events per second
-  eventTimestamps = [];
-  // Historical snapshots for trending
-  snapshots = [];
-  maxSnapshots = 60;
-  // Keep last 60 snapshots (e.g., 1 per second = 1 minute)
-  constructor() {
-    this.startTime = Date.now();
-  }
-  /**
-   * Record a published event
-   */
-  recordPublished() {
-    this.totalPublished++;
-    const e = Date.now();
-    this.eventTimestamps.push(e), this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3);
-  }
-  /**
-   * Record a dropped event
-   */
-  recordDropped() {
-    this.totalDropped++;
-  }
-  /**
-   * Record a sampled event
-   */
-  recordSampled() {
-    this.totalSampled++;
-  }
-  /**
-   * Record a deduplicated event
-   */
-  recordDeduplicated() {
-    this.totalDeduplicated++;
-  }
-  /**
-   * Update logger count
-   */
-  setLoggerCount(e) {
-    this.loggerCount = e;
-  }
-  /**
-   * Update watcher count
-   */
-  setWatcherCount(e) {
-    this.watcherCount = e;
-  }
-  /**
-   * Update subscriber count
-   */
-  setSubscriberCount(e) {
-    this.subscriberCount = e;
-  }
-  /**
-   * Update buffer size
-   */
-  setBufferSize(e) {
-    this.bufferSize = e;
-  }
-  /**
-   * Update circuit state
-   */
-  setCircuitState(e) {
-    this.circuitState = e;
-  }
-  /**
-   * Get current events per second
-   */
-  getEventsPerSecond() {
-    const e = Date.now();
-    return this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3), this.eventTimestamps.length;
-  }
-  /**
-   * Get current bus metrics
-   */
-  getBusMetrics() {
-    return {
-      totalPublished: this.totalPublished,
-      totalDropped: this.totalDropped,
-      totalSampled: this.totalSampled,
-      totalDeduplicated: this.totalDeduplicated,
-      eventsPerSecond: this.getEventsPerSecond(),
-      bufferSize: this.bufferSize,
-      subscriberCount: this.subscriberCount
-    };
-  }
-  /**
-   * Get full Satori metrics
-   */
-  getMetrics() {
-    return {
-      bus: this.getBusMetrics(),
-      loggerCount: this.loggerCount,
-      watcherCount: this.watcherCount,
-      circuitState: this.circuitState,
-      uptime: Date.now() - this.startTime
-    };
-  }
-  /**
-   * Take a snapshot for historical tracking
-   */
-  takeSnapshot() {
-    const e = {
-      timestamp: Date.now(),
-      bus: this.getBusMetrics(),
-      loggerCount: this.loggerCount,
-      watcherCount: this.watcherCount,
-      circuitState: this.circuitState,
-      uptime: Date.now() - this.startTime
-    };
-    return this.snapshots.push(e), this.snapshots.length > this.maxSnapshots && (this.snapshots = this.snapshots.slice(-this.maxSnapshots)), e;
-  }
-  /**
-   * Get historical snapshots
-   */
-  getSnapshots() {
-    return [...this.snapshots];
-  }
-  /**
-   * Get average events per second over time
-   */
-  getAverageEventsPerSecond() {
-    return this.snapshots.length === 0 ? 0 : this.snapshots.reduce(
-      (t, i) => t + i.bus.eventsPerSecond,
-      0
-    ) / this.snapshots.length;
-  }
-  /**
-   * Reset all metrics
-   */
-  reset() {
-    this.startTime = Date.now(), this.totalPublished = 0, this.totalDropped = 0, this.totalSampled = 0, this.totalDeduplicated = 0, this.eventTimestamps = [], this.snapshots = [];
-  }
-}
-let w = null;
-function he() {
-  return w || (w = new C()), w;
-}
-function de() {
-  w = null;
-}
-const k = {
-  enabled: !1,
-  maxEventsPerSecond: 1e3,
-  samplingRate: 0.1,
-  strategy: "sample",
-  bufferSize: 100
-}, B = {
-  enabled: !1,
-  windowMs: 5e3,
-  fields: ["message", "scope", "level"],
-  maxCacheSize: 1e3
-}, E = {
-  enabled: !1,
-  failureThreshold: 5,
-  resetTimeout: 3e4,
-  successThreshold: 3
-}, y = {
-  enableCallsite: !0,
-  enableEnvInfo: !0,
-  enableStateSnapshot: !1,
-  enableCausalLinks: !0,
-  enableMetrics: !0,
-  enableConsole: !0,
-  stateSelectors: [],
-  maxBufferSize: 1e3,
-  logLevel: "info",
-  appVersion: "1.0.0",
-  pollingInterval: 250,
-  // More reasonable default
-  customLevels: [],
-  rateLimiting: k,
-  deduplication: B,
-  circuitBreaker: E
+//#region src/bus/rateLimiter.ts
+var e = class {
+	config;
+	eventTimestamps = [];
+	buffer = [];
+	droppedCount = 0;
+	sampledCount = 0;
+	constructor(e) {
+		this.config = e;
+	}
+	shouldAllow(e) {
+		if (!this.config.enabled) return {
+			allowed: !0,
+			sampled: !1
+		};
+		let t = Date.now();
+		if (this.eventTimestamps = this.eventTimestamps.filter((e) => t - e < 1e3), this.eventTimestamps.length < this.config.maxEventsPerSecond) return this.eventTimestamps.push(t), {
+			allowed: !0,
+			sampled: !1
+		};
+		switch (this.config.strategy) {
+			case "drop": return this.droppedCount++, {
+				allowed: !1,
+				sampled: !1
+			};
+			case "sample": return Math.random() < this.config.samplingRate ? (this.eventTimestamps.push(t), this.sampledCount++, {
+				allowed: !0,
+				sampled: !0
+			}) : (this.droppedCount++, {
+				allowed: !1,
+				sampled: !1
+			});
+			case "buffer": return this.buffer.length < (this.config.bufferSize || 100) ? this.buffer.push(e) : this.droppedCount++, {
+				allowed: !1,
+				sampled: !1
+			};
+			default: return {
+				allowed: !0,
+				sampled: !1
+			};
+		}
+	}
+	flushBuffer() {
+		let e = [...this.buffer];
+		return this.buffer = [], e;
+	}
+	getCurrentRate() {
+		let e = Date.now();
+		return this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3), this.eventTimestamps.length;
+	}
+	getStats() {
+		return {
+			dropped: this.droppedCount,
+			sampled: this.sampledCount,
+			buffered: this.buffer.length,
+			currentRate: this.getCurrentRate()
+		};
+	}
+	reset() {
+		this.eventTimestamps = [], this.buffer = [], this.droppedCount = 0, this.sampledCount = 0;
+	}
+	updateConfig(e) {
+		this.config = {
+			...this.config,
+			...e
+		};
+	}
 };
-class R {
-  subscribers = [];
-  middleware = [];
-  buffer = [];
-  maxBufferSize;
-  rateLimiter;
-  deduplicator;
-  circuitBreaker;
-  metrics;
-  enableMetrics;
-  constructor(e = {}) {
-    typeof e == "number" && (e = { maxBufferSize: e }), this.maxBufferSize = e.maxBufferSize || 1e3, this.enableMetrics = e.enableMetrics ?? !0, this.rateLimiter = new M({
-      ...k,
-      ...e.rateLimiting
-    }), this.deduplicator = new F({
-      ...B,
-      ...e.deduplication
-    }), this.circuitBreaker = new I(
-      {
-        ...E,
-        ...e.circuitBreaker
-      },
-      {
-        onStateChange: (t) => {
-          this.enableMetrics && this.metrics.setCircuitState(t);
-        }
-      }
-    ), this.metrics = new C();
-  }
-  publish(e) {
-    if (!e.__internal?.isReplay && !e.skipDedup && this.deduplicator.isDuplicate(e).isDuplicate) {
-      this.enableMetrics && this.metrics.recordDeduplicated();
-      return;
-    }
-    if (!e.__internal?.isReplay && !e.skipRateLimit) {
-      const t = this.rateLimiter.shouldAllow(e);
-      if (!t.allowed) {
-        this.enableMetrics && this.metrics.recordDropped();
-        return;
-      }
-      t.sampled && (e.__internal = e.__internal || {}, e.__internal.sampled = !0, this.enableMetrics && this.metrics.recordSampled());
-    }
-    try {
-      this.circuitBreaker.executeSync(() => {
-        this.doPublish(e);
-      }), this.enableMetrics && (this.metrics.recordPublished(), this.metrics.setBufferSize(this.buffer.length), this.metrics.setSubscriberCount(this.subscribers.length));
-    } catch {
-      this.enableMetrics && this.metrics.recordDropped();
-    }
-  }
-  doPublish(e) {
-    let t = 0;
-    const i = () => {
-      if (t >= this.middleware.length) {
-        this.subscribers.forEach((n) => n(e)), this.addToBuffer(e);
-        return;
-      }
-      const r = this.middleware[t];
-      t++, r(e, i);
-    };
-    i();
-  }
-  subscribe(e) {
-    return this.subscribers.push(e), this.enableMetrics && this.metrics.setSubscriberCount(this.subscribers.length), () => {
-      const t = this.subscribers.indexOf(e);
-      t >= 0 && (this.subscribers.splice(t, 1), this.enableMetrics && this.metrics.setSubscriberCount(this.subscribers.length));
-    };
-  }
-  use(e) {
-    this.middleware.push(e);
-  }
-  getReplayBuffer() {
-    return [...this.buffer];
-  }
-  getMetrics() {
-    return this.metrics.getBusMetrics();
-  }
-  /**
-   * Get the rate limiter instance for advanced configuration
-   */
-  getRateLimiter() {
-    return this.rateLimiter;
-  }
-  /**
-   * Get the deduplicator instance for advanced configuration
-   */
-  getDeduplicator() {
-    return this.deduplicator;
-  }
-  /**
-   * Get the circuit breaker instance for advanced configuration
-   */
-  getCircuitBreaker() {
-    return this.circuitBreaker;
-  }
-  /**
-   * Clear the event buffer
-   */
-  clearBuffer() {
-    this.buffer.length = 0, this.enableMetrics && this.metrics.setBufferSize(0);
-  }
-  /**
-   * Reset all state
-   */
-  reset() {
-    this.buffer.length = 0, this.middleware.length = 0, this.rateLimiter.reset(), this.deduplicator.reset(), this.circuitBreaker.reset(), this.metrics.reset();
-  }
-  addToBuffer(e) {
-    this.buffer.push(e), this.buffer.length > this.maxBufferSize && this.buffer.shift();
-  }
+//#endregion
+//#region src/core/utils/deepEqual.ts
+function t(e, n, r = /* @__PURE__ */ new WeakMap()) {
+	if (e === n) return !0;
+	if (typeof e == "number" && typeof n == "number") return Number.isNaN(e) && Number.isNaN(n) ? !0 : e === n;
+	if (e === null || n === null || e === void 0 || n === void 0) return e === n;
+	if (typeof e != typeof n || typeof e != "object") return !1;
+	let i = e, a = n;
+	if (r.has(i)) return r.get(i) === a;
+	if (r.set(i, a), e instanceof Date && n instanceof Date) return e.getTime() === n.getTime();
+	if (e instanceof Date || n instanceof Date) return !1;
+	if (e instanceof RegExp && n instanceof RegExp) return e.source === n.source && e.flags === n.flags;
+	if (e instanceof RegExp || n instanceof RegExp) return !1;
+	if (e instanceof Map && n instanceof Map) {
+		if (e.size !== n.size) return !1;
+		for (let [i, a] of e) if (!n.has(i) || !t(a, n.get(i), r)) return !1;
+		return !0;
+	}
+	if (e instanceof Map || n instanceof Map) return !1;
+	if (e instanceof Set && n instanceof Set) {
+		if (e.size !== n.size) return !1;
+		let i = Array.from(e), a = Array.from(n);
+		for (let e of i) {
+			let n = !1;
+			for (let i of a) if (t(e, i, r)) {
+				n = !0;
+				break;
+			}
+			if (!n) return !1;
+		}
+		return !0;
+	}
+	if (e instanceof Set || n instanceof Set) return !1;
+	if (Array.isArray(e) && Array.isArray(n)) {
+		if (e.length !== n.length) return !1;
+		let i = Object.keys(e).filter((e) => /^\d+$/.test(e)).map(Number), a = Object.keys(n).filter((e) => /^\d+$/.test(e)).map(Number);
+		if (i.length !== a.length) return !1;
+		for (let e of i) if (!a.includes(e)) return !1;
+		for (let i = 0; i < e.length; i++) {
+			let a = Object.prototype.hasOwnProperty.call(e, i);
+			if (a !== Object.prototype.hasOwnProperty.call(n, i) || a && !t(e[i], n[i], r)) return !1;
+		}
+		let o = Object.keys(e).filter((e) => !/^\d+$/.test(e)), s = Object.keys(n).filter((e) => !/^\d+$/.test(e));
+		if (o.length !== s.length) return !1;
+		for (let i of o) if (!Object.prototype.hasOwnProperty.call(n, i) || !t(e[i], n[i], r)) return !1;
+		return !0;
+	}
+	if (Array.isArray(e) !== Array.isArray(n)) return !1;
+	let o = e, s = n, c = Object.keys(o), l = Object.keys(s);
+	if (c.length !== l.length) return !1;
+	for (let e of c) if (!Object.prototype.hasOwnProperty.call(s, e) || !t(o[e], s[e], r)) return !1;
+	return !0;
 }
-let A = 0;
-const N = Date.now().toString(36);
+function n(e, t = /* @__PURE__ */ new WeakMap()) {
+	if (typeof e != "object" || !e) return e;
+	let r = e;
+	if (t.has(r)) return t.get(r);
+	if (e instanceof Date) return new Date(e.getTime());
+	if (e instanceof RegExp) return new RegExp(e.source, e.flags);
+	if (e instanceof Map) {
+		let i = /* @__PURE__ */ new Map();
+		t.set(r, i);
+		for (let [r, a] of e) i.set(n(r, t), n(a, t));
+		return i;
+	}
+	if (e instanceof Set) {
+		let i = /* @__PURE__ */ new Set();
+		t.set(r, i);
+		for (let r of e) i.add(n(r, t));
+		return i;
+	}
+	if (Array.isArray(e)) {
+		let i = [];
+		t.set(r, i);
+		for (let r = 0; r < e.length; r++) Object.prototype.hasOwnProperty.call(e, r) && (i[r] = n(e[r], t));
+		for (let r of Object.keys(e)) /^\d+$/.test(r) || (i[r] = n(e[r], t));
+		return i;
+	}
+	let i = {};
+	t.set(r, i);
+	for (let r of Object.keys(e)) i[r] = n(e[r], t);
+	return i;
+}
+function r(e, t = /* @__PURE__ */ new WeakSet()) {
+	return e === null ? "null" : e === void 0 ? "undefined" : typeof e == "string" ? `s:${e}` : typeof e == "number" ? Number.isNaN(e) ? "n:NaN" : `n:${e}` : typeof e == "boolean" ? `b:${e}` : typeof e == "object" ? t.has(e) ? "[Circular]" : (t.add(e), e instanceof Date ? `d:${e.getTime()}` : e instanceof RegExp ? `r:${e.source}:${e.flags}` : e instanceof Map ? `m:{${Array.from(e.entries()).map(([e, n]) => `${r(e, t)}=>${r(n, t)}`).sort().join(",")}}` : e instanceof Set ? `set:{${Array.from(e).map((e) => r(e, t)).sort().join(",")}}` : Array.isArray(e) ? `a:[${e.map((n, i) => Object.prototype.hasOwnProperty.call(e, i) ? r(n, t) : "<empty>").join(",")}]` : `o:{${Object.entries(e).sort(([e], [t]) => e.localeCompare(t)).map(([e, n]) => `${e}:${r(n, t)}`).join(",")}}`) : String(e);
+}
+//#endregion
+//#region src/bus/deduplicator.ts
+var i = class {
+	config;
+	cache = /* @__PURE__ */ new Map();
+	deduplicatedCount = 0;
+	constructor(e) {
+		this.config = e;
+	}
+	computeDedupKey(e) {
+		let t = [];
+		for (let n of this.config.fields) switch (n) {
+			case "message":
+				t.push(`m:${e.message}`);
+				break;
+			case "scope":
+				t.push(`s:${e.scope}`);
+				break;
+			case "level":
+				t.push(`l:${e.level}`);
+				break;
+			case "tags":
+				t.push(`t:${e.tags.sort().join(",")}`);
+				break;
+			case "state":
+				e.state && t.push(`st:${r(e.state)}`);
+				break;
+		}
+		return t.join("|");
+	}
+	isDuplicate(e) {
+		if (!this.config.enabled) return {
+			isDuplicate: !1,
+			duplicateCount: 0
+		};
+		let t = Date.now(), n = this.computeDedupKey(e);
+		this.cleanExpired(t);
+		let r = this.cache.get(n);
+		return r && t - r.timestamp < this.config.windowMs ? (r.count++, this.deduplicatedCount++, {
+			isDuplicate: !0,
+			duplicateCount: r.count
+		}) : (this.cache.set(n, {
+			hash: n,
+			timestamp: t,
+			count: 1
+		}), this.cache.size > this.config.maxCacheSize && this.evictOldest(), {
+			isDuplicate: !1,
+			duplicateCount: 1
+		});
+	}
+	cleanExpired(e) {
+		for (let [t, n] of this.cache.entries()) e - n.timestamp >= this.config.windowMs && this.cache.delete(t);
+	}
+	evictOldest() {
+		let e = null, t = Infinity;
+		for (let [n, r] of this.cache.entries()) r.timestamp < t && (t = r.timestamp, e = n);
+		e && this.cache.delete(e);
+	}
+	getStats() {
+		return {
+			cacheSize: this.cache.size,
+			deduplicatedCount: this.deduplicatedCount
+		};
+	}
+	reset() {
+		this.cache.clear(), this.deduplicatedCount = 0;
+	}
+	updateConfig(e) {
+		this.config = {
+			...this.config,
+			...e
+		};
+	}
+}, a = class {
+	config;
+	events;
+	state = "closed";
+	failureCount = 0;
+	successCount = 0;
+	lastFailureTime = 0;
+	totalFailures = 0;
+	totalSuccesses = 0;
+	constructor(e, t = {}) {
+		this.config = e, this.events = t;
+	}
+	async execute(e) {
+		if (!this.config.enabled) return e();
+		if (!this.canExecute()) throw new o("Circuit breaker is open");
+		try {
+			let t = await e();
+			return this.recordSuccess(), t;
+		} catch (e) {
+			throw this.recordFailure(e instanceof Error ? e : Error(String(e))), e;
+		}
+	}
+	executeSync(e) {
+		if (!this.config.enabled) return e();
+		if (!this.canExecute()) throw new o("Circuit breaker is open");
+		try {
+			let t = e();
+			return this.recordSuccess(), t;
+		} catch (e) {
+			throw this.recordFailure(e instanceof Error ? e : Error(String(e))), e;
+		}
+	}
+	canExecute() {
+		return this.state === "closed" ? !0 : this.state === "open" ? Date.now() - this.lastFailureTime >= this.config.resetTimeout ? (this.transitionTo("half-open"), !0) : !1 : !0;
+	}
+	recordSuccess() {
+		this.totalSuccesses++, this.events.onSuccess?.(this.successCount + 1), this.state === "half-open" ? (this.successCount++, this.successCount >= this.config.successThreshold && this.transitionTo("closed")) : this.state === "closed" && (this.failureCount = 0);
+	}
+	recordFailure(e) {
+		this.totalFailures++, this.failureCount++, this.lastFailureTime = Date.now(), this.events.onFailure?.(e, this.failureCount), (this.state === "half-open" || this.state === "closed" && this.failureCount >= this.config.failureThreshold) && this.transitionTo("open");
+	}
+	transitionTo(e) {
+		let t = this.state;
+		this.state = e, e === "closed" ? (this.failureCount = 0, this.successCount = 0, this.events.onClose?.()) : e === "open" ? (this.successCount = 0, this.events.onOpen?.()) : e === "half-open" && (this.successCount = 0, this.events.onHalfOpen?.()), this.events.onStateChange?.(e, t);
+	}
+	getState() {
+		return this.state;
+	}
+	getStats() {
+		return {
+			state: this.state,
+			failureCount: this.failureCount,
+			successCount: this.successCount,
+			totalFailures: this.totalFailures,
+			totalSuccesses: this.totalSuccesses,
+			lastFailureTime: this.lastFailureTime
+		};
+	}
+	reset() {
+		this.transitionTo("closed"), this.failureCount = 0, this.successCount = 0, this.totalFailures = 0, this.totalSuccesses = 0, this.lastFailureTime = 0;
+	}
+	forceOpen() {
+		this.transitionTo("open"), this.lastFailureTime = Date.now();
+	}
+	forceClose() {
+		this.transitionTo("closed");
+	}
+}, o = class extends Error {
+	constructor(e) {
+		super(e), this.name = "CircuitOpenError";
+	}
+}, s = class {
+	startTime;
+	totalPublished = 0;
+	totalDropped = 0;
+	totalSampled = 0;
+	totalDeduplicated = 0;
+	recentEvents = [];
+	loggerCount = 0;
+	watcherCount = 0;
+	subscriberCount = 0;
+	bufferSize = 0;
+	circuitState = "closed";
+	eventTimestamps = [];
+	snapshots = [];
+	maxSnapshots = 60;
+	constructor() {
+		this.startTime = Date.now();
+	}
+	recordPublished() {
+		this.totalPublished++;
+		let e = Date.now();
+		this.eventTimestamps.push(e), this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3);
+	}
+	recordDropped() {
+		this.totalDropped++;
+	}
+	recordSampled() {
+		this.totalSampled++;
+	}
+	recordDeduplicated() {
+		this.totalDeduplicated++;
+	}
+	setLoggerCount(e) {
+		this.loggerCount = e;
+	}
+	setWatcherCount(e) {
+		this.watcherCount = e;
+	}
+	setSubscriberCount(e) {
+		this.subscriberCount = e;
+	}
+	setBufferSize(e) {
+		this.bufferSize = e;
+	}
+	setCircuitState(e) {
+		this.circuitState = e;
+	}
+	getEventsPerSecond() {
+		let e = Date.now();
+		return this.eventTimestamps = this.eventTimestamps.filter((t) => e - t < 1e3), this.eventTimestamps.length;
+	}
+	getBusMetrics() {
+		return {
+			totalPublished: this.totalPublished,
+			totalDropped: this.totalDropped,
+			totalSampled: this.totalSampled,
+			totalDeduplicated: this.totalDeduplicated,
+			eventsPerSecond: this.getEventsPerSecond(),
+			bufferSize: this.bufferSize,
+			subscriberCount: this.subscriberCount
+		};
+	}
+	getMetrics() {
+		return {
+			bus: this.getBusMetrics(),
+			loggerCount: this.loggerCount,
+			watcherCount: this.watcherCount,
+			circuitState: this.circuitState,
+			uptime: Date.now() - this.startTime
+		};
+	}
+	takeSnapshot() {
+		let e = {
+			timestamp: Date.now(),
+			bus: this.getBusMetrics(),
+			loggerCount: this.loggerCount,
+			watcherCount: this.watcherCount,
+			circuitState: this.circuitState,
+			uptime: Date.now() - this.startTime
+		};
+		return this.snapshots.push(e), this.snapshots.length > this.maxSnapshots && (this.snapshots = this.snapshots.slice(-this.maxSnapshots)), e;
+	}
+	getSnapshots() {
+		return [...this.snapshots];
+	}
+	getAverageEventsPerSecond() {
+		return this.snapshots.length === 0 ? 0 : this.snapshots.reduce((e, t) => e + t.bus.eventsPerSecond, 0) / this.snapshots.length;
+	}
+	reset() {
+		this.startTime = Date.now(), this.totalPublished = 0, this.totalDropped = 0, this.totalSampled = 0, this.totalDeduplicated = 0, this.eventTimestamps = [], this.snapshots = [];
+	}
+}, c = null;
+function l() {
+	return c ||= new s(), c;
+}
+function ee() {
+	c = null;
+}
+//#endregion
+//#region src/core/config.ts
+var u = {
+	enabled: !1,
+	maxEventsPerSecond: 1e3,
+	samplingRate: .1,
+	strategy: "sample",
+	bufferSize: 100
+}, d = {
+	enabled: !1,
+	windowMs: 5e3,
+	fields: [
+		"message",
+		"scope",
+		"level"
+	],
+	maxCacheSize: 1e3
+}, f = {
+	enabled: !1,
+	failureThreshold: 5,
+	resetTimeout: 3e4,
+	successThreshold: 3
+}, p = {
+	enableCallsite: !0,
+	enableEnvInfo: !0,
+	enableStateSnapshot: !1,
+	enableCausalLinks: !0,
+	enableMetrics: !0,
+	enableConsole: !0,
+	stateSelectors: [],
+	maxBufferSize: 1e3,
+	logLevel: "info",
+	appVersion: "1.0.0",
+	pollingInterval: 250,
+	customLevels: [],
+	rateLimiting: u,
+	deduplication: d,
+	circuitBreaker: f
+}, m = class {
+	subscribers = [];
+	middleware = [];
+	buffer = [];
+	maxBufferSize;
+	rateLimiter;
+	deduplicator;
+	circuitBreaker;
+	metrics;
+	enableMetrics;
+	constructor(t = {}) {
+		typeof t == "number" && (t = { maxBufferSize: t }), this.maxBufferSize = t.maxBufferSize || 1e3, this.enableMetrics = t.enableMetrics ?? !0, this.rateLimiter = new e({
+			...u,
+			...t.rateLimiting
+		}), this.deduplicator = new i({
+			...d,
+			...t.deduplication
+		}), this.circuitBreaker = new a({
+			...f,
+			...t.circuitBreaker
+		}, { onStateChange: (e) => {
+			this.enableMetrics && this.metrics.setCircuitState(e);
+		} }), this.metrics = new s();
+	}
+	publish(e) {
+		if (!e.__internal?.isReplay && !e.skipDedup && this.deduplicator.isDuplicate(e).isDuplicate) {
+			this.enableMetrics && this.metrics.recordDeduplicated();
+			return;
+		}
+		if (!e.__internal?.isReplay && !e.skipRateLimit) {
+			let t = this.rateLimiter.shouldAllow(e);
+			if (!t.allowed) {
+				this.enableMetrics && this.metrics.recordDropped();
+				return;
+			}
+			t.sampled && (e.__internal = e.__internal || {}, e.__internal.sampled = !0, this.enableMetrics && this.metrics.recordSampled());
+		}
+		try {
+			this.circuitBreaker.executeSync(() => {
+				this.doPublish(e);
+			}), this.enableMetrics && (this.metrics.recordPublished(), this.metrics.setBufferSize(this.buffer.length), this.metrics.setSubscriberCount(this.subscribers.length));
+		} catch {
+			this.enableMetrics && this.metrics.recordDropped();
+		}
+	}
+	doPublish(e) {
+		let t = 0, n = () => {
+			if (t >= this.middleware.length) {
+				this.subscribers.forEach((t) => t(e)), this.addToBuffer(e);
+				return;
+			}
+			let r = this.middleware[t];
+			t++, r(e, n);
+		};
+		n();
+	}
+	subscribe(e) {
+		return this.subscribers.push(e), this.enableMetrics && this.metrics.setSubscriberCount(this.subscribers.length), () => {
+			let t = this.subscribers.indexOf(e);
+			t >= 0 && (this.subscribers.splice(t, 1), this.enableMetrics && this.metrics.setSubscriberCount(this.subscribers.length));
+		};
+	}
+	use(e) {
+		this.middleware.push(e);
+	}
+	getReplayBuffer() {
+		return [...this.buffer];
+	}
+	getMetrics() {
+		return this.metrics.getBusMetrics();
+	}
+	getRateLimiter() {
+		return this.rateLimiter;
+	}
+	getDeduplicator() {
+		return this.deduplicator;
+	}
+	getCircuitBreaker() {
+		return this.circuitBreaker;
+	}
+	clearBuffer() {
+		this.buffer.length = 0, this.enableMetrics && this.metrics.setBufferSize(0);
+	}
+	reset() {
+		this.buffer.length = 0, this.middleware.length = 0, this.rateLimiter.reset(), this.deduplicator.reset(), this.circuitBreaker.reset(), this.metrics.reset();
+	}
+	addToBuffer(e) {
+		this.buffer.push(e), this.buffer.length > this.maxBufferSize && this.buffer.shift();
+	}
+}, te = 0, ne = Date.now().toString(36);
+function h() {
+	return `${ne}-${++te}`;
+}
+//#endregion
+//#region src/core/utils/time.ts
+function g() {
+	return Date.now();
+}
+function _(e) {
+	return new Date(e).toISOString();
+}
+//#endregion
+//#region src/core/utils/stacktrace.ts
+function v(e = 2) {
+	try {
+		let t = (/* @__PURE__ */ Error()).stack;
+		if (!t) return;
+		let n = t.split("\n")[e];
+		if (!n) return;
+		let r = n.match(/at\s+(.+?)\s+\((.+?):(\d+):(\d+)\)/) || n.match(/at\s+(.+?):(\d+):(\d+)/);
+		if (r) {
+			let [, e, t, n, i] = r;
+			return `${t}:${n}:${i}${e ? ` (${e})` : ""}`;
+		}
+		return n.trim();
+	} catch {
+		return;
+	}
+}
+//#endregion
+//#region src/enrich/env.ts
+function y() {
+	return typeof globalThis < "u" && "Deno" in globalThis ? "deno" : typeof globalThis < "u" && "Bun" in globalThis ? "bun" : typeof globalThis < "u" && "caches" in globalThis && typeof globalThis.caches == "object" && !("window" in globalThis) ? "cloudflare-workers" : typeof globalThis < "u" && "EdgeRuntime" in globalThis ? "edge" : typeof window < "u" && typeof document < "u" ? "browser" : typeof process < "u" && process.versions && process.versions.node ? "node" : "unknown";
+}
+function b(e) {
+	let t = y(), n = {
+		platform: t,
+		appVersion: e.appVersion
+	};
+	switch (t) {
+		case "browser":
+			typeof navigator < "u" && (n.userAgent = navigator.userAgent), typeof window < "u" && (n.url = window.location?.href, typeof document < "u" && (n.referrer = document.referrer));
+			break;
+		case "node":
+			typeof process < "u" && (n.nodeVersion = process.version, n.arch = process.arch, process.env.NODE_ENV && (n.nodeEnv = process.env.NODE_ENV));
+			break;
+		case "deno":
+			try {
+				let e = globalThis.Deno;
+				e?.version && (n.denoVersion = e.version.deno, n.v8Version = e.version.v8, n.typescriptVersion = e.version.typescript), e?.build && (n.os = e.build.os, n.arch = e.build.arch);
+			} catch {}
+			break;
+		case "bun":
+			try {
+				let e = globalThis.Bun;
+				e?.version && (n.bunVersion = e.version), e?.revision && (n.bunRevision = e.revision);
+			} catch {}
+			break;
+		case "cloudflare-workers":
+			n.runtime = "cloudflare-workers";
+			break;
+		case "edge":
+			try {
+				n.edgeRuntime = globalThis.EdgeRuntime;
+			} catch {}
+			break;
+	}
+	return n;
+}
+//#endregion
+//#region src/enrich/stateSnapshot.ts
+function x(e) {
+	if (!e.stateSelectors || e.stateSelectors.length === 0) return;
+	let t = {};
+	for (let r = 0; r < e.stateSelectors.length; r++) {
+		let i = e.stateSelectors[r], a = typeof i == "function" ? i : i.selector, o = typeof i == "function" ? `selector_${r}` : i.name || `selector_${r}`;
+		try {
+			let e = a();
+			e != null && (t[o] = n(e));
+		} catch (e) {
+			t[`${o}_error`] = e instanceof Error ? e.message : String(e);
+		}
+	}
+	return Object.keys(t).length > 0 ? t : void 0;
+}
+function re(e, t) {
+	return {
+		name: e,
+		selector: t
+	};
+}
+function S(...e) {
+	let t = {};
+	for (let n of e) n && Object.assign(t, n);
+	return t;
+}
+function C(e, t) {
+	let n = [], r = [], i = [], a = new Set(e ? Object.keys(e) : []), o = new Set(t ? Object.keys(t) : []);
+	for (let e of o) a.has(e) || n.push(e);
+	for (let e of a) o.has(e) || r.push(e);
+	for (let n of a) o.has(n) && e && t && JSON.stringify(e[n]) !== JSON.stringify(t[n]) && i.push(n);
+	return {
+		added: n,
+		removed: r,
+		changed: i
+	};
+}
+var w = new class {
+	nodes = /* @__PURE__ */ new Map();
+	scopeLastEvent = /* @__PURE__ */ new Map();
+	globalLastEvent;
+	maxNodes = 1e4;
+	addEvent(e, t, n) {
+		let r = {
+			eventId: e,
+			scope: t,
+			timestamp: Date.now(),
+			causes: n || [],
+			effects: []
+		};
+		if (n) for (let t of n) {
+			let n = this.nodes.get(t);
+			n && n.effects.push(e);
+		}
+		this.nodes.set(e, r), this.scopeLastEvent.set(t, e), this.globalLastEvent = e, this.nodes.size > this.maxNodes && this.pruneOldest(Math.floor(this.maxNodes * .1));
+	}
+	getCausalLink(e, t) {
+		return t || this.scopeLastEvent.get(e) || this.globalLastEvent;
+	}
+	getCauses(e, t = Infinity) {
+		let n = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), i = (e, a) => {
+			if (r.has(e) || a > t) return;
+			r.add(e);
+			let o = this.nodes.get(e);
+			if (o) for (let e of o.causes) n.add(e), i(e, a + 1);
+		};
+		return i(e, 0), Array.from(n);
+	}
+	getEffects(e, t = Infinity) {
+		let n = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), i = (e, a) => {
+			if (r.has(e) || a > t) return;
+			r.add(e);
+			let o = this.nodes.get(e);
+			if (o) for (let e of o.effects) n.add(e), i(e, a + 1);
+		};
+		return i(e, 0), Array.from(n);
+	}
+	getCausalChain(e) {
+		let t = [], n = e, r = /* @__PURE__ */ new Set();
+		for (; n && !r.has(n);) {
+			r.add(n), t.unshift(n);
+			let e = this.nodes.get(n);
+			if (!e || e.causes.length === 0) break;
+			n = e.causes[0];
+		}
+		return t;
+	}
+	getNode(e) {
+		return this.nodes.get(e);
+	}
+	areCausallyRelated(e, t) {
+		let n = this.getCauses(e), r = this.getEffects(e);
+		return n.includes(t) || r.includes(t);
+	}
+	getEventsByScope(e) {
+		let t = [];
+		for (let [n, r] of this.nodes) r.scope === e && t.push(n);
+		return t;
+	}
+	pruneOldest(e) {
+		let t = Array.from(this.nodes.entries()).sort(([, e], [, t]) => e.timestamp - t.timestamp).slice(0, e);
+		for (let [e] of t) {
+			let t = this.nodes.get(e);
+			if (t) {
+				for (let n of t.causes) {
+					let t = this.nodes.get(n);
+					t && (t.effects = t.effects.filter((t) => t !== e));
+				}
+				for (let n of t.effects) {
+					let t = this.nodes.get(n);
+					t && (t.causes = t.causes.filter((t) => t !== e));
+				}
+			}
+			this.nodes.delete(e);
+		}
+	}
+	clear() {
+		this.nodes.clear(), this.scopeLastEvent.clear(), this.globalLastEvent = void 0;
+	}
+	getStats() {
+		let e = 0, t = 0;
+		for (let n of this.nodes.values()) e += n.causes.length, t += n.effects.length;
+		let n = this.nodes.size || 1;
+		return {
+			nodeCount: this.nodes.size,
+			avgCauses: e / n,
+			avgEffects: t / n
+		};
+	}
+}(), T = /* @__PURE__ */ new Map();
+function E(e, t) {
+	return w.getCausalLink(e, t);
+}
+function D(e, t, n) {
+	w.addEvent(t, e, n), T.set(e, t);
+}
 function O() {
-  return `${N}-${++A}`;
+	w.clear(), T.clear();
 }
-function z() {
-  return Date.now();
+function k() {
+	return w;
 }
-function pe(s) {
-  return new Date(s).toISOString();
-}
-function j(s = 2) {
-  try {
-    const e = new Error().stack;
-    if (!e) return;
-    const i = e.split(`
-`)[s];
-    if (!i) return;
-    const r = i.match(/at\s+(.+?)\s+\((.+?):(\d+):(\d+)\)/) || i.match(/at\s+(.+?):(\d+):(\d+)/);
-    if (r) {
-      const [, n, o, a, f] = r;
-      return `${o}:${a}:${f}${n ? ` (${n})` : ""}`;
-    }
-    return i.trim();
-  } catch {
-    return;
-  }
-}
-function P() {
-  return typeof globalThis < "u" && "Deno" in globalThis ? "deno" : typeof globalThis < "u" && "Bun" in globalThis ? "bun" : typeof globalThis < "u" && "caches" in globalThis && typeof globalThis.caches == "object" && !("window" in globalThis) ? "cloudflare-workers" : typeof globalThis < "u" && "EdgeRuntime" in globalThis ? "edge" : typeof window < "u" && typeof document < "u" ? "browser" : typeof process < "u" && process.versions && process.versions.node ? "node" : "unknown";
-}
-function V(s) {
-  const e = P(), t = {
-    platform: e,
-    appVersion: s.appVersion
-  };
-  switch (e) {
-    case "browser":
-      typeof navigator < "u" && (t.userAgent = navigator.userAgent), typeof window < "u" && (t.url = window.location?.href, typeof document < "u" && (t.referrer = document.referrer));
-      break;
-    case "node":
-      typeof process < "u" && (t.nodeVersion = process.version, t.arch = process.arch, process.env.NODE_ENV && (t.nodeEnv = process.env.NODE_ENV));
-      break;
-    case "deno":
-      try {
-        const i = globalThis.Deno;
-        i?.version && (t.denoVersion = i.version.deno, t.v8Version = i.version.v8, t.typescriptVersion = i.version.typescript), i?.build && (t.os = i.build.os, t.arch = i.build.arch);
-      } catch {
-      }
-      break;
-    case "bun":
-      try {
-        const i = globalThis.Bun;
-        i?.version && (t.bunVersion = i.version), i?.revision && (t.bunRevision = i.revision);
-      } catch {
-      }
-      break;
-    case "cloudflare-workers":
-      t.runtime = "cloudflare-workers";
-      break;
-    case "edge":
-      try {
-        const i = globalThis.EdgeRuntime;
-        t.edgeRuntime = i;
-      } catch {
-      }
-      break;
-  }
-  return t;
-}
-function _(s) {
-  if (!s.stateSelectors || s.stateSelectors.length === 0)
-    return;
-  const e = {};
-  for (let t = 0; t < s.stateSelectors.length; t++) {
-    const i = s.stateSelectors[t], r = typeof i == "function" ? i : i.selector, n = typeof i == "function" ? `selector_${t}` : i.name || `selector_${t}`;
-    try {
-      const o = r();
-      o != null && (e[n] = p(o));
-    } catch (o) {
-      e[`${n}_error`] = o instanceof Error ? o.message : String(o);
-    }
-  }
-  return Object.keys(e).length > 0 ? e : void 0;
-}
-function me(s, e) {
-  return { name: s, selector: e };
-}
-function ge(...s) {
-  const e = {};
-  for (const t of s)
-    t && Object.assign(e, t);
-  return e;
-}
-function be(s, e) {
-  const t = [], i = [], r = [], n = new Set(s ? Object.keys(s) : []), o = new Set(e ? Object.keys(e) : []);
-  for (const a of o)
-    n.has(a) || t.push(a);
-  for (const a of n)
-    o.has(a) || i.push(a);
-  for (const a of n)
-    o.has(a) && s && e && JSON.stringify(s[a]) !== JSON.stringify(e[a]) && r.push(a);
-  return { added: t, removed: i, changed: r };
-}
-class W {
-  nodes = /* @__PURE__ */ new Map();
-  scopeLastEvent = /* @__PURE__ */ new Map();
-  globalLastEvent;
-  maxNodes = 1e4;
-  /**
-   * Add a new event to the causal graph
-   */
-  addEvent(e, t, i) {
-    const r = {
-      eventId: e,
-      scope: t,
-      timestamp: Date.now(),
-      causes: i || [],
-      effects: []
-    };
-    if (i)
-      for (const n of i) {
-        const o = this.nodes.get(n);
-        o && o.effects.push(e);
-      }
-    this.nodes.set(e, r), this.scopeLastEvent.set(t, e), this.globalLastEvent = e, this.nodes.size > this.maxNodes && this.pruneOldest(Math.floor(this.maxNodes * 0.1));
-  }
-  /**
-   * Get the causal link for a new event
-   */
-  getCausalLink(e, t) {
-    return t || this.scopeLastEvent.get(e) || this.globalLastEvent;
-  }
-  /**
-   * Get all causes (direct and transitive) for an event
-   */
-  getCauses(e, t = 1 / 0) {
-    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, a) => {
-      if (r.has(o) || a > t) return;
-      r.add(o);
-      const f = this.nodes.get(o);
-      if (f)
-        for (const c of f.causes)
-          i.add(c), n(c, a + 1);
-    };
-    return n(e, 0), Array.from(i);
-  }
-  /**
-   * Get all effects (direct and transitive) for an event
-   */
-  getEffects(e, t = 1 / 0) {
-    const i = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Set(), n = (o, a) => {
-      if (r.has(o) || a > t) return;
-      r.add(o);
-      const f = this.nodes.get(o);
-      if (f)
-        for (const c of f.effects)
-          i.add(c), n(c, a + 1);
-    };
-    return n(e, 0), Array.from(i);
-  }
-  /**
-   * Get the causal chain from root to an event
-   */
-  getCausalChain(e) {
-    const t = [];
-    let i = e;
-    const r = /* @__PURE__ */ new Set();
-    for (; i && !r.has(i); ) {
-      r.add(i), t.unshift(i);
-      const n = this.nodes.get(i);
-      if (!n || n.causes.length === 0) break;
-      i = n.causes[0];
-    }
-    return t;
-  }
-  /**
-   * Get node information
-   */
-  getNode(e) {
-    return this.nodes.get(e);
-  }
-  /**
-   * Check if two events are causally related
-   */
-  areCausallyRelated(e, t) {
-    const i = this.getCauses(e), r = this.getEffects(e);
-    return i.includes(t) || r.includes(t);
-  }
-  /**
-   * Get events in the same scope
-   */
-  getEventsByScope(e) {
-    const t = [];
-    for (const [i, r] of this.nodes)
-      r.scope === e && t.push(i);
-    return t;
-  }
-  /**
-   * Prune oldest nodes to stay within memory limits
-   */
-  pruneOldest(e) {
-    const t = Array.from(this.nodes.entries()).sort(([, i], [, r]) => i.timestamp - r.timestamp).slice(0, e);
-    for (const [i] of t) {
-      const r = this.nodes.get(i);
-      if (r) {
-        for (const n of r.causes) {
-          const o = this.nodes.get(n);
-          o && (o.effects = o.effects.filter((a) => a !== i));
-        }
-        for (const n of r.effects) {
-          const o = this.nodes.get(n);
-          o && (o.causes = o.causes.filter((a) => a !== i));
-        }
-      }
-      this.nodes.delete(i);
-    }
-  }
-  /**
-   * Clear all causal links
-   */
-  clear() {
-    this.nodes.clear(), this.scopeLastEvent.clear(), this.globalLastEvent = void 0;
-  }
-  /**
-   * Get statistics about the causal graph
-   */
-  getStats() {
-    let e = 0, t = 0;
-    for (const r of this.nodes.values())
-      e += r.causes.length, t += r.effects.length;
-    const i = this.nodes.size || 1;
-    return {
-      nodeCount: this.nodes.size,
-      avgCauses: e / i,
-      avgEffects: t / i
-    };
-  }
-}
-const m = new W(), x = /* @__PURE__ */ new Map();
-function K(s, e) {
-  return m.getCausalLink(s, e);
-}
-function H(s, e, t) {
-  m.addEvent(e, s, t), x.set(s, e);
-}
-function ve() {
-  m.clear(), x.clear();
-}
-function ye() {
-  return m;
-}
-const we = {
-  getCauses: (s, e) => m.getCauses(s, e),
-  getEffects: (s, e) => m.getEffects(s, e),
-  getCausalChain: (s) => m.getCausalChain(s),
-  areCausallyRelated: (s, e) => m.areCausallyRelated(s, e),
-  getEventsByScope: (s) => m.getEventsByScope(s),
-  getStats: () => m.getStats()
+var A = {
+	getCauses: (e, t) => w.getCauses(e, t),
+	getEffects: (e, t) => w.getEffects(e, t),
+	getCausalChain: (e) => w.getCausalChain(e),
+	areCausallyRelated: (e, t) => w.areCausallyRelated(e, t),
+	getEventsByScope: (e) => w.getEventsByScope(e),
+	getStats: () => w.getStats()
 };
-function G(s, e, t) {
-  const i = O(), r = z(), n = [...s.inheritedTags || [], ...s.options?.tags || []], o = {
-    id: i,
-    timestamp: r,
-    level: s.level,
-    scope: s.scope,
-    message: s.message,
-    tags: n,
-    cause: s.inheritedCause || s.options?.cause,
-    causeEventId: s.inheritedCauseEventId || s.options?.causeEventId,
-    suggest: s.options?.suggest
-  };
-  if (s.options?.state && (o.state = { ...s.options.state }), e.enableCallsite && !o.__internal?.isReplay && (o.callsite = j(4)), e.enableEnvInfo && !o.__internal?.isReplay && (o.env = V(e)), e.enableStateSnapshot && !o.__internal?.isReplay) {
-    const a = _(e);
-    a && (o.state = { ...o.state, ...a });
-  }
-  if (e.enableCausalLinks && !o.__internal?.isReplay) {
-    const a = K(s.scope, t);
-    a && (o.previousEventId = a);
-  }
-  return o;
+//#endregion
+//#region src/enrich/enrichEvent.ts
+function j(e, t, n) {
+	let r = h(), i = g(), a = [...e.inheritedTags || [], ...e.options?.tags || []], o = {
+		id: r,
+		timestamp: i,
+		level: e.level,
+		scope: e.scope,
+		message: e.message,
+		tags: a,
+		cause: e.inheritedCause || e.options?.cause,
+		causeEventId: e.inheritedCauseEventId || e.options?.causeEventId,
+		suggest: e.options?.suggest
+	};
+	if (e.options?.state && (o.state = { ...e.options.state }), t.enableCallsite && !o.__internal?.isReplay && (o.callsite = v(4)), t.enableEnvInfo && !o.__internal?.isReplay && (o.env = b(t)), t.enableStateSnapshot && !o.__internal?.isReplay) {
+		let e = x(t);
+		e && (o.state = {
+			...o.state,
+			...e
+		});
+	}
+	if (t.enableCausalLinks && !o.__internal?.isReplay) {
+		let t = E(e.scope, n);
+		t && (o.previousEventId = t);
+	}
+	return o;
 }
-class U {
-  constructor(e, t) {
-    this.logger = e, this.config = t, this.circuitBreaker = new I(
-      {
-        ...E,
-        enabled: t.circuitBreaker?.enabled ?? !1,
-        ...t.circuitBreaker
-      },
-      {
-        onOpen: () => {
-          this.logger.warn(
-            "WatcherEngine circuit breaker opened: too many errors",
-            {
-              tags: ["watcher", "circuit-breaker"]
-            }
-          );
-        },
-        onClose: () => {
-          this.logger.info("WatcherEngine circuit breaker closed: recovered", {
-            tags: ["watcher", "circuit-breaker"]
-          });
-        }
-      }
-    );
-  }
-  watchers = /* @__PURE__ */ new Map();
-  whenHandlers = /* @__PURE__ */ new Map();
-  circuitBreaker;
-  disposed = !1;
-  watch(e, t) {
-    if (this.disposed)
-      throw new Error("WatcherEngine has been disposed");
-    const i = this.generateId(), r = typeof e == "function" ? e : () => e, n = {
-      id: i,
-      getValue: r,
-      label: t,
-      lastValue: void 0,
-      errorCount: 0,
-      disposed: !1
-    }, o = () => {
-      if (!(n.disposed || this.disposed))
-        try {
-          this.circuitBreaker.executeSync(() => {
-            const f = r();
-            if (!g(f, n.lastValue)) {
-              const c = t || `watch_${i}`;
-              let l;
-              if (typeof f == "object" && f !== null)
-                l = `${c}: state changed`;
-              else {
-                const u = this.formatValue(n.lastValue), d = this.formatValue(f);
-                l = `${c}: ${u} -> ${d}`;
-              }
-              this.logger.info(l, {
-                tags: ["watch"],
-                state: {
-                  [`${c}_prev`]: p(n.lastValue),
-                  [`${c}_current`]: p(f)
-                }
-              }), n.lastValue = p(f);
-            }
-            n.errorCount = 0;
-          });
-        } catch (f) {
-          n.errorCount++, (n.errorCount <= 3 || n.errorCount % 10 === 0) && this.logger.error(
-            `Watch error for ${t || i} (count: ${n.errorCount})`,
-            {
-              tags: ["watch", "error"],
-              state: {
-                error: f instanceof Error ? f.message : String(f)
-              }
-            }
-          ), n.errorCount >= 50 && (this.logger.error(
-            `Watch ${t || i} disposed due to repeated errors`,
-            {
-              tags: ["watch", "error", "auto-disposed"]
-            }
-          ), this.disposeWatcher(i));
-        }
-    };
-    o();
-    const a = setInterval(o, this.config.pollingInterval || 250);
-    return n.intervalId = a, this.watchers.set(i, n), {
-      dispose: () => this.disposeWatcher(i)
-    };
-  }
-  when(e, t, i) {
-    if (this.disposed)
-      throw new Error("WatcherEngine has been disposed");
-    const r = this.generateId(), n = typeof e == "function" ? e : () => e, o = {
-      id: r,
-      getValue: n,
-      predicate: t,
-      onTrigger: i,
-      lastValue: void 0,
-      intervalId: null,
-      errorCount: 0,
-      disposed: !1
-    }, f = setInterval(() => {
-      if (!(o.disposed || this.disposed))
-        try {
-          this.circuitBreaker.executeSync(() => {
-            const c = n(), l = o.lastValue !== void 0 ? p(o.lastValue) : void 0, u = p(c);
-            t(l, u) && i(u, l), o.lastValue = u, o.errorCount = 0;
-          });
-        } catch (c) {
-          o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 === 0) && this.logger.error(
-            `When condition error for ${r} (count: ${o.errorCount})`,
-            {
-              tags: ["when", "error"],
-              state: {
-                error: c instanceof Error ? c.message : String(c)
-              }
-            }
-          ), o.errorCount >= 50 && (this.logger.error(
-            `When handler ${r} disposed due to repeated errors`,
-            {
-              tags: ["when", "error", "auto-disposed"]
-            }
-          ), this.disposeWhenHandler(r));
-        }
-    }, this.config.pollingInterval || 250);
-    return o.intervalId = f, this.whenHandlers.set(r, o), {
-      dispose: () => this.disposeWhenHandler(r)
-    };
-  }
-  disposeWatcher(e) {
-    const t = this.watchers.get(e);
-    t && (t.disposed = !0, t.intervalId && clearInterval(t.intervalId), this.watchers.delete(e));
-  }
-  disposeWhenHandler(e) {
-    const t = this.whenHandlers.get(e);
-    t && (t.disposed = !0, t.intervalId && clearInterval(t.intervalId), this.whenHandlers.delete(e));
-  }
-  generateId() {
-    return Math.random().toString(36).substring(2, 11);
-  }
-  formatValue(e) {
-    return e === void 0 ? "undefined" : e === null ? "null" : typeof e == "string" ? `"${e}"` : typeof e == "number" || typeof e == "boolean" ? String(e) : Array.isArray(e) ? `Array(${e.length})` : typeof e == "object" ? `Object(${Object.keys(e).length} keys)` : String(e);
-  }
-  /**
-   * Get the number of active watchers
-   */
-  getWatcherCount() {
-    return this.watchers.size + this.whenHandlers.size;
-  }
-  /**
-   * Get circuit breaker state
-   */
-  getCircuitState() {
-    return this.circuitBreaker.getState();
-  }
-  /**
-   * Dispose all watchers and clean up
-   */
-  dispose() {
-    this.disposed || (this.disposed = !0, this.watchers.forEach((e) => {
-      e.disposed = !0, e.intervalId && clearInterval(e.intervalId);
-    }), this.whenHandlers.forEach((e) => {
-      e.disposed = !0, e.intervalId && clearInterval(e.intervalId);
-    }), this.watchers.clear(), this.whenHandlers.clear());
-  }
-  /**
-   * Check if the engine has been disposed
-   */
-  isDisposed() {
-    return this.disposed;
-  }
+//#endregion
+//#region src/watch/watcherEngine.ts
+var M = class {
+	logger;
+	config;
+	watchers = /* @__PURE__ */ new Map();
+	whenHandlers = /* @__PURE__ */ new Map();
+	circuitBreaker;
+	disposed = !1;
+	constructor(e, t) {
+		this.logger = e, this.config = t, this.circuitBreaker = new a({
+			...f,
+			enabled: t.circuitBreaker?.enabled ?? !1,
+			...t.circuitBreaker
+		}, {
+			onOpen: () => {
+				this.logger.warn("WatcherEngine circuit breaker opened: too many errors", { tags: ["watcher", "circuit-breaker"] });
+			},
+			onClose: () => {
+				this.logger.info("WatcherEngine circuit breaker closed: recovered", { tags: ["watcher", "circuit-breaker"] });
+			}
+		});
+	}
+	watch(e, r) {
+		if (this.disposed) throw Error("WatcherEngine has been disposed");
+		let i = this.generateId(), a = typeof e == "function" ? e : () => e, o = {
+			id: i,
+			getValue: a,
+			label: r,
+			lastValue: void 0,
+			errorCount: 0,
+			disposed: !1
+		}, s = () => {
+			if (!(o.disposed || this.disposed)) try {
+				this.circuitBreaker.executeSync(() => {
+					let e = a();
+					if (!t(e, o.lastValue)) {
+						let t = r || `watch_${i}`, a;
+						a = typeof e == "object" && e ? `${t}: state changed` : `${t}: ${this.formatValue(o.lastValue)} -> ${this.formatValue(e)}`, this.logger.info(a, {
+							tags: ["watch"],
+							state: {
+								[`${t}_prev`]: n(o.lastValue),
+								[`${t}_current`]: n(e)
+							}
+						}), o.lastValue = n(e);
+					}
+					o.errorCount = 0;
+				});
+			} catch (e) {
+				o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 == 0) && this.logger.error(`Watch error for ${r || i} (count: ${o.errorCount})`, {
+					tags: ["watch", "error"],
+					state: { error: e instanceof Error ? e.message : String(e) }
+				}), o.errorCount >= 50 && (this.logger.error(`Watch ${r || i} disposed due to repeated errors`, { tags: [
+					"watch",
+					"error",
+					"auto-disposed"
+				] }), this.disposeWatcher(i));
+			}
+		};
+		return s(), o.intervalId = setInterval(s, this.config.pollingInterval || 250), this.watchers.set(i, o), { dispose: () => this.disposeWatcher(i) };
+	}
+	when(e, t, r) {
+		if (this.disposed) throw Error("WatcherEngine has been disposed");
+		let i = this.generateId(), a = typeof e == "function" ? e : () => e, o = {
+			id: i,
+			getValue: a,
+			predicate: t,
+			onTrigger: r,
+			lastValue: void 0,
+			intervalId: null,
+			errorCount: 0,
+			disposed: !1
+		};
+		return o.intervalId = setInterval(() => {
+			if (!(o.disposed || this.disposed)) try {
+				this.circuitBreaker.executeSync(() => {
+					let e = a(), i = o.lastValue === void 0 ? void 0 : n(o.lastValue), s = n(e);
+					t(i, s) && r(s, i), o.lastValue = s, o.errorCount = 0;
+				});
+			} catch (e) {
+				o.errorCount++, (o.errorCount <= 3 || o.errorCount % 10 == 0) && this.logger.error(`When condition error for ${i} (count: ${o.errorCount})`, {
+					tags: ["when", "error"],
+					state: { error: e instanceof Error ? e.message : String(e) }
+				}), o.errorCount >= 50 && (this.logger.error(`When handler ${i} disposed due to repeated errors`, { tags: [
+					"when",
+					"error",
+					"auto-disposed"
+				] }), this.disposeWhenHandler(i));
+			}
+		}, this.config.pollingInterval || 250), this.whenHandlers.set(i, o), { dispose: () => this.disposeWhenHandler(i) };
+	}
+	disposeWatcher(e) {
+		let t = this.watchers.get(e);
+		t && (t.disposed = !0, t.intervalId && clearInterval(t.intervalId), this.watchers.delete(e));
+	}
+	disposeWhenHandler(e) {
+		let t = this.whenHandlers.get(e);
+		t && (t.disposed = !0, t.intervalId && clearInterval(t.intervalId), this.whenHandlers.delete(e));
+	}
+	generateId() {
+		return Math.random().toString(36).substring(2, 11);
+	}
+	formatValue(e) {
+		return e === void 0 ? "undefined" : e === null ? "null" : typeof e == "string" ? `"${e}"` : typeof e == "number" || typeof e == "boolean" ? String(e) : Array.isArray(e) ? `Array(${e.length})` : typeof e == "object" ? `Object(${Object.keys(e).length} keys)` : String(e);
+	}
+	getWatcherCount() {
+		return this.watchers.size + this.whenHandlers.size;
+	}
+	getCircuitState() {
+		return this.circuitBreaker.getState();
+	}
+	dispose() {
+		this.disposed || (this.disposed = !0, this.watchers.forEach((e) => {
+			e.disposed = !0, e.intervalId && clearInterval(e.intervalId);
+		}), this.whenHandlers.forEach((e) => {
+			e.disposed = !0, e.intervalId && clearInterval(e.intervalId);
+		}), this.watchers.clear(), this.whenHandlers.clear());
+	}
+	isDisposed() {
+		return this.disposed;
+	}
+}, ie = {
+	debug: 0,
+	info: 1,
+	warn: 2,
+	error: 3
+}, N = class e {
+	scope;
+	config;
+	bus;
+	lastEventId;
+	inheritedTags = [];
+	inheritedCause;
+	inheritedCauseEventId;
+	watcherEngine;
+	disposed = !1;
+	levelSeverities;
+	constructor(e, t, n, r) {
+		if (this.scope = e, this.config = t, this.bus = n, this.lastEventId = r, this.watcherEngine = new M(this, t), this.levelSeverities = { ...ie }, t.customLevels) for (let e of t.customLevels) this.levelSeverities[e.name] = e.severity;
+	}
+	event(e, t) {
+		this.log("info", e, t);
+	}
+	info(e, t) {
+		this.log("info", e, t);
+	}
+	warn(e, t) {
+		this.log("warn", e, t);
+	}
+	error(e, t) {
+		this.log("error", e, t);
+	}
+	debug(e, t) {
+		this.log("debug", e, t);
+	}
+	log(e, t, n) {
+		if (this.disposed) {
+			console.warn(`Attempted to log on disposed logger (scope: ${this.scope})`);
+			return;
+		}
+		e in this.levelSeverities || (console.warn(`Unknown log level: ${e}, defaulting to info`), e = "info");
+		let r = this.config.logLevel || "info", i = this.levelSeverities[r] ?? 1;
+		if ((this.levelSeverities[e] ?? 1) < i) return;
+		let a = j({
+			level: e,
+			scope: this.scope,
+			message: t,
+			options: n,
+			inheritedTags: this.inheritedTags,
+			inheritedCause: this.inheritedCause,
+			inheritedCauseEventId: this.inheritedCauseEventId
+		}, this.config, this.lastEventId), o = this.inheritedCauseEventId ? [this.inheritedCauseEventId] : void 0;
+		D(this.scope, a.id, o), this.lastEventId = a.id, this.bus.publish(a);
+	}
+	tag(...t) {
+		let n = new e(this.scope, this.config, this.bus, this.lastEventId);
+		return n.inheritedTags = [...this.inheritedTags, ...t], n.inheritedCause = this.inheritedCause, n.inheritedCauseEventId = this.inheritedCauseEventId, n;
+	}
+	causedBy(t) {
+		let n = new e(this.scope, this.config, this.bus, this.lastEventId);
+		return n.inheritedTags = [...this.inheritedTags], typeof t == "string" ? n.inheritedCause = t : (n.inheritedCause = t.message, n.inheritedCauseEventId = t.id), n;
+	}
+	watch(e, t) {
+		if (this.disposed) throw Error(`Cannot create watch on disposed logger (scope: ${this.scope})`);
+		return this.watcherEngine.watch(e, t);
+	}
+	when(e, t, n) {
+		if (this.disposed) throw Error(`Cannot create when handler on disposed logger (scope: ${this.scope})`);
+		return this.watcherEngine.when(e, t, n);
+	}
+	getWatcherCount() {
+		return this.watcherEngine.getWatcherCount();
+	}
+	dispose() {
+		this.disposed || (this.disposed = !0, this.watcherEngine.dispose());
+	}
+	isDisposed() {
+		return this.disposed;
+	}
+}, P = [
+	"debug",
+	"info",
+	"warn",
+	"error"
+];
+function F(e) {
+	let t = [], n = [];
+	if (e.enableCallsite !== void 0 && typeof e.enableCallsite != "boolean" && t.push("enableCallsite must be a boolean"), e.enableEnvInfo !== void 0 && typeof e.enableEnvInfo != "boolean" && t.push("enableEnvInfo must be a boolean"), e.enableStateSnapshot !== void 0 && typeof e.enableStateSnapshot != "boolean" && t.push("enableStateSnapshot must be a boolean"), e.enableCausalLinks !== void 0 && typeof e.enableCausalLinks != "boolean" && t.push("enableCausalLinks must be a boolean"), e.stateSelectors !== void 0 && (Array.isArray(e.stateSelectors) ? e.stateSelectors.forEach((e, n) => {
+		typeof e != "function" && t.push(`stateSelectors[${n}] must be a function`);
+	}) : t.push("stateSelectors must be an array")), e.maxBufferSize !== void 0 && (typeof e.maxBufferSize == "number" ? e.maxBufferSize < 1 ? t.push("maxBufferSize must be at least 1") : e.maxBufferSize > 1e5 && n.push("maxBufferSize is very large (>100000), this may cause memory issues") : t.push("maxBufferSize must be a number")), e.logLevel !== void 0 && (P.includes(e.logLevel) || t.push(`logLevel must be one of: ${P.join(", ")}`)), e.appVersion !== void 0 && typeof e.appVersion != "string" && t.push("appVersion must be a string"), e.pollingInterval !== void 0 && (typeof e.pollingInterval == "number" ? e.pollingInterval < 10 ? t.push("pollingInterval must be at least 10ms") : e.pollingInterval < 50 && n.push("pollingInterval is very low (<50ms), this may impact performance") : t.push("pollingInterval must be a number")), e.rateLimiting !== void 0) if (typeof e.rateLimiting != "object" || e.rateLimiting === null) t.push("rateLimiting must be an object");
+	else {
+		let n = e.rateLimiting;
+		n.enabled !== void 0 && typeof n.enabled != "boolean" && t.push("rateLimiting.enabled must be a boolean"), n.maxEventsPerSecond !== void 0 && (typeof n.maxEventsPerSecond == "number" ? n.maxEventsPerSecond < 1 && t.push("rateLimiting.maxEventsPerSecond must be at least 1") : t.push("rateLimiting.maxEventsPerSecond must be a number")), n.samplingRate !== void 0 && (typeof n.samplingRate == "number" ? (n.samplingRate < 0 || n.samplingRate > 1) && t.push("rateLimiting.samplingRate must be between 0 and 1") : t.push("rateLimiting.samplingRate must be a number"));
+	}
+	if (e.deduplication !== void 0) if (typeof e.deduplication != "object" || e.deduplication === null) t.push("deduplication must be an object");
+	else {
+		let n = e.deduplication;
+		if (n.enabled !== void 0 && typeof n.enabled != "boolean" && t.push("deduplication.enabled must be a boolean"), n.windowMs !== void 0 && (typeof n.windowMs == "number" ? n.windowMs < 100 && t.push("deduplication.windowMs must be at least 100ms") : t.push("deduplication.windowMs must be a number")), n.fields !== void 0) if (!Array.isArray(n.fields)) t.push("deduplication.fields must be an array");
+		else {
+			let e = [
+				"message",
+				"scope",
+				"level",
+				"tags",
+				"state"
+			];
+			n.fields.forEach((n, r) => {
+				typeof n == "string" ? e.includes(n) || t.push(`deduplication.fields[${r}] "${n}" is not a valid field. Valid fields: ${e.join(", ")}`) : t.push(`deduplication.fields[${r}] must be a string`);
+			});
+		}
+	}
+	if (e.customLevels !== void 0) if (!Array.isArray(e.customLevels)) t.push("customLevels must be an array");
+	else {
+		let r = /* @__PURE__ */ new Set(), i = ["log", "event"];
+		e.customLevels.forEach((e, a) => {
+			typeof e.name != "string" || e.name.trim() === "" ? t.push(`customLevels[${a}].name must be a non-empty string`) : (r.has(e.name) && t.push(`customLevels[${a}].name "${e.name}" is a duplicate`), r.add(e.name), i.includes(e.name.toLowerCase()) && t.push(`customLevels[${a}].name "${e.name}" is a reserved method name`), P.includes(e.name) && n.push(`customLevels[${a}].name "${e.name}" shadows a built-in level`)), typeof e.severity != "number" && t.push(`customLevels[${a}].severity must be a number`);
+		});
+	}
+	return {
+		valid: t.length === 0,
+		errors: t,
+		warnings: n
+	};
 }
-const q = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3
+function ae(e) {
+	let t = F(e);
+	if (!t.valid) throw Error(`Invalid Satori configuration:\n${t.errors.join("\n")}`);
+}
+//#endregion
+//#region src/persistence/adapters.ts
+var oe = class {
+	name = "memory";
+	store = [];
+	maxSize;
+	constructor(e = 1e4) {
+		this.maxSize = e;
+	}
+	async write(e) {
+		this.store.push(...e), this.store.length > this.maxSize && (this.store = this.store.slice(-this.maxSize));
+	}
+	async read(e) {
+		let t = [...this.store];
+		return e?.startTime && (t = t.filter((t) => t.timestamp >= e.startTime)), e?.endTime && (t = t.filter((t) => t.timestamp <= e.endTime)), e?.levels?.length && (t = t.filter((t) => e.levels.includes(t.level))), e?.scopes?.length && (t = t.filter((t) => e.scopes.includes(t.scope))), e?.offset && (t = t.slice(e.offset)), e?.limit && (t = t.slice(0, e.limit)), t;
+	}
+	async clear() {
+		this.store = [];
+	}
+	async close() {}
+	getSize() {
+		return this.store.length;
+	}
+}, se = class {
+	name = "localStorage";
+	storageKey;
+	maxSize;
+	constructor(e = "satori_logs", t = 1e3) {
+		this.storageKey = e, this.maxSize = t;
+	}
+	async write(e) {
+		if (typeof localStorage > "u") throw Error("localStorage is not available in this environment");
+		let t = [...await this.read(), ...e].slice(-this.maxSize);
+		localStorage.setItem(this.storageKey, JSON.stringify(t));
+	}
+	async read(e) {
+		if (typeof localStorage > "u") return [];
+		let t = localStorage.getItem(this.storageKey);
+		if (!t) return [];
+		let n;
+		try {
+			n = JSON.parse(t);
+		} catch {
+			return [];
+		}
+		return e?.startTime && (n = n.filter((t) => t.timestamp >= e.startTime)), e?.endTime && (n = n.filter((t) => t.timestamp <= e.endTime)), e?.levels?.length && (n = n.filter((t) => e.levels.includes(t.level))), e?.scopes?.length && (n = n.filter((t) => e.scopes.includes(t.scope))), e?.offset && (n = n.slice(e.offset)), e?.limit && (n = n.slice(0, e.limit)), n;
+	}
+	async clear() {
+		typeof localStorage < "u" && localStorage.removeItem(this.storageKey);
+	}
+	async close() {}
+}, ce = class {
+	name = "indexedDB";
+	dbName;
+	storeName = "logs";
+	db = null;
+	maxSize;
+	constructor(e = "satori", t = 1e5) {
+		this.dbName = e, this.maxSize = t;
+	}
+	async getDB() {
+		return this.db ? this.db : new Promise((e, t) => {
+			if (typeof indexedDB > "u") {
+				t(/* @__PURE__ */ Error("IndexedDB is not available in this environment"));
+				return;
+			}
+			let n = indexedDB.open(this.dbName, 1);
+			n.onerror = () => t(n.error), n.onsuccess = () => {
+				this.db = n.result, e(this.db);
+			}, n.onupgradeneeded = () => {
+				let e = n.result;
+				if (!e.objectStoreNames.contains(this.storeName)) {
+					let t = e.createObjectStore(this.storeName, { keyPath: "id" });
+					t.createIndex("timestamp", "timestamp"), t.createIndex("level", "level"), t.createIndex("scope", "scope");
+				}
+			};
+		});
+	}
+	async write(e) {
+		let t = await this.getDB();
+		return new Promise((n, r) => {
+			let i = t.transaction(this.storeName, "readwrite"), a = i.objectStore(this.storeName);
+			for (let t of e) a.put(t);
+			i.oncomplete = () => n(), i.onerror = () => r(i.error);
+		});
+	}
+	async read(e) {
+		let t = await this.getDB();
+		return new Promise((n, r) => {
+			let i = t.transaction(this.storeName, "readonly").objectStore(this.storeName).index("timestamp"), a = [], o = i.openCursor();
+			o.onsuccess = () => {
+				let t = o.result;
+				if (t) {
+					let n = t.value, r = !0;
+					e?.startTime && n.timestamp < e.startTime && (r = !1), e?.endTime && n.timestamp > e.endTime && (r = !1), e?.levels?.length && !e.levels.includes(n.level) && (r = !1), e?.scopes?.length && !e.scopes.includes(n.scope) && (r = !1), r && a.push(n), t.continue();
+				} else {
+					let t = a;
+					e?.offset && (t = t.slice(e.offset)), e?.limit && (t = t.slice(0, e.limit)), n(t);
+				}
+			}, o.onerror = () => r(o.error);
+		});
+	}
+	async clear() {
+		let e = await this.getDB();
+		return new Promise((t, n) => {
+			let r = e.transaction(this.storeName, "readwrite").objectStore(this.storeName).clear();
+			r.onsuccess = () => t(), r.onerror = () => n(r.error);
+		});
+	}
+	async close() {
+		this.db &&= (this.db.close(), null);
+	}
+}, le = class {
+	name = "console";
+	inMemory = [];
+	async write(e) {
+		for (let t of e) {
+			let e = t.level;
+			(console[e === "debug" ? "log" : e] ?? console.log)(`[${t.scope}] ${t.message}`, t), this.inMemory.push(t);
+		}
+	}
+	async read() {
+		return [...this.inMemory];
+	}
+	async clear() {
+		this.inMemory = [];
+	}
+	async close() {}
+}, I = class {
+	buffer = [];
+	flushTimer = null;
+	config;
+	constructor(e) {
+		this.config = e, e.enabled && e.flushInterval && this.startAutoFlush();
+	}
+	add(e) {
+		this.config.enabled && (this.buffer.push(e), this.config.batchSize && this.buffer.length >= this.config.batchSize && this.flush());
+	}
+	async flush() {
+		if (this.buffer.length === 0) return;
+		let e = [...this.buffer];
+		this.buffer = [];
+		try {
+			await this.config.adapter.write(e);
+		} catch (t) {
+			throw this.buffer.length < 1e4 && (this.buffer = [...e, ...this.buffer]), t;
+		}
+	}
+	startAutoFlush() {
+		this.flushTimer ||= setInterval(() => {
+			this.flush().catch(console.error);
+		}, this.config.flushInterval);
+	}
+	async close() {
+		this.flushTimer &&= (clearInterval(this.flushTimer), null), await this.flush(), await this.config.adapter.close?.();
+	}
+	getBufferSize() {
+		return this.buffer.length;
+	}
 };
-class v {
-  constructor(e, t, i, r) {
-    if (this.scope = e, this.config = t, this.bus = i, this.lastEventId = r, this.watcherEngine = new U(this, t), this.levelSeverities = { ...q }, t.customLevels)
-      for (const n of t.customLevels)
-        this.levelSeverities[n.name] = n.severity;
-  }
-  inheritedTags = [];
-  inheritedCause;
-  inheritedCauseEventId;
-  watcherEngine;
-  disposed = !1;
-  levelSeverities;
-  event(e, t) {
-    this.log("info", e, t);
-  }
-  info(e, t) {
-    this.log("info", e, t);
-  }
-  warn(e, t) {
-    this.log("warn", e, t);
-  }
-  error(e, t) {
-    this.log("error", e, t);
-  }
-  debug(e, t) {
-    this.log("debug", e, t);
-  }
-  /**
-   * Log with any level (built-in or custom)
-   */
-  log(e, t, i) {
-    if (this.disposed) {
-      console.warn(
-        `Attempted to log on disposed logger (scope: ${this.scope})`
-      );
-      return;
-    }
-    e in this.levelSeverities || (console.warn(`Unknown log level: ${e}, defaulting to info`), e = "info");
-    const r = this.config.logLevel || "info", n = this.levelSeverities[r] ?? 1;
-    if ((this.levelSeverities[e] ?? 1) < n)
-      return;
-    const a = G(
-      {
-        level: e,
-        scope: this.scope,
-        message: t,
-        options: i,
-        inheritedTags: this.inheritedTags,
-        inheritedCause: this.inheritedCause,
-        inheritedCauseEventId: this.inheritedCauseEventId
-      },
-      this.config,
-      this.lastEventId
-    ), f = this.inheritedCauseEventId ? [this.inheritedCauseEventId] : void 0;
-    H(this.scope, a.id, f), this.lastEventId = a.id, this.bus.publish(a);
-  }
-  tag(...e) {
-    const t = new v(
-      this.scope,
-      this.config,
-      this.bus,
-      this.lastEventId
-    );
-    return t.inheritedTags = [...this.inheritedTags, ...e], t.inheritedCause = this.inheritedCause, t.inheritedCauseEventId = this.inheritedCauseEventId, t;
-  }
-  causedBy(e) {
-    const t = new v(
-      this.scope,
-      this.config,
-      this.bus,
-      this.lastEventId
-    );
-    return t.inheritedTags = [...this.inheritedTags], typeof e == "string" ? t.inheritedCause = e : (t.inheritedCause = e.message, t.inheritedCauseEventId = e.id), t;
-  }
-  watch(e, t) {
-    if (this.disposed)
-      throw new Error(
-        `Cannot create watch on disposed logger (scope: ${this.scope})`
-      );
-    return this.watcherEngine.watch(e, t);
-  }
-  when(e, t, i) {
-    if (this.disposed)
-      throw new Error(
-        `Cannot create when handler on disposed logger (scope: ${this.scope})`
-      );
-    return this.watcherEngine.when(e, t, i);
-  }
-  /**
-   * Get the number of active watchers on this logger
-   */
-  getWatcherCount() {
-    return this.watcherEngine.getWatcherCount();
-  }
-  /**
-   * Dispose this logger and all its watchers
-   */
-  dispose() {
-    this.disposed || (this.disposed = !0, this.watcherEngine.dispose());
-  }
-  /**
-   * Check if this logger has been disposed
-   */
-  isDisposed() {
-    return this.disposed;
-  }
+//#endregion
+//#region src/logger/createSatori.ts
+function L(e = {}) {
+	let t = F(e);
+	if (!t.valid) throw Error(`Invalid Satori configuration:\n${t.errors.join("\n")}`);
+	t.warnings.length > 0 && console.warn("Satori configuration warnings:", t.warnings);
+	let n = {
+		...p,
+		...e,
+		rateLimiting: {
+			...p.rateLimiting,
+			...e.rateLimiting
+		},
+		deduplication: {
+			...p.deduplication,
+			...e.deduplication
+		},
+		circuitBreaker: {
+			...p.circuitBreaker,
+			...e.circuitBreaker
+		}
+	}, r = new m({
+		maxBufferSize: n.maxBufferSize,
+		rateLimiting: n.rateLimiting,
+		deduplication: n.deduplication,
+		circuitBreaker: n.circuitBreaker,
+		enableMetrics: n.enableMetrics
+	});
+	!(typeof process < "u" && process.env.NODE_ENV === "test") && n.enableConsole !== !1 && typeof console < "u" && r.subscribe((e) => {
+		let t = e.level;
+		(console[t === "debug" ? "log" : t] ?? console.log)(`[${e.scope}] ${e.message}`, e);
+	});
+	let i = new N("root", n, r), a = /* @__PURE__ */ new Map();
+	a.set("root", i);
+	let o = null;
+	n.persistence?.enabled && (o = new I(n.persistence), r.subscribe((e) => {
+		o?.add(e);
+	}));
+	let c = new s(), l = Date.now();
+	return {
+		config: n,
+		bus: r,
+		rootLogger: i,
+		createLogger(e) {
+			let t = new N(e, n, r);
+			return a.set(e, t), c.setLoggerCount(a.size), t;
+		},
+		getMetrics() {
+			let e = 0;
+			for (let t of a.values()) t.isDisposed() || (e += t.getWatcherCount());
+			return c.setWatcherCount(e), {
+				bus: r.getMetrics(),
+				loggerCount: a.size,
+				watcherCount: e,
+				circuitState: r.getCircuitBreaker().getState(),
+				uptime: Date.now() - l
+			};
+		},
+		async flush() {
+			o && await o.flush();
+		},
+		dispose() {
+			for (let e of a.values()) e.dispose();
+			a.clear();
+			let e = r.getReplayBuffer?.();
+			e && (e.length = 0), r.reset(), o && o.close().catch(console.error);
+		}
+	};
 }
-const S = ["debug", "info", "warn", "error"];
-function D(s) {
-  const e = [], t = [];
-  if (s.enableCallsite !== void 0 && typeof s.enableCallsite != "boolean" && e.push("enableCallsite must be a boolean"), s.enableEnvInfo !== void 0 && typeof s.enableEnvInfo != "boolean" && e.push("enableEnvInfo must be a boolean"), s.enableStateSnapshot !== void 0 && typeof s.enableStateSnapshot != "boolean" && e.push("enableStateSnapshot must be a boolean"), s.enableCausalLinks !== void 0 && typeof s.enableCausalLinks != "boolean" && e.push("enableCausalLinks must be a boolean"), s.stateSelectors !== void 0 && (Array.isArray(s.stateSelectors) ? s.stateSelectors.forEach((i, r) => {
-    typeof i != "function" && e.push(`stateSelectors[${r}] must be a function`);
-  }) : e.push("stateSelectors must be an array")), s.maxBufferSize !== void 0 && (typeof s.maxBufferSize != "number" ? e.push("maxBufferSize must be a number") : s.maxBufferSize < 1 ? e.push("maxBufferSize must be at least 1") : s.maxBufferSize > 1e5 && t.push(
-    "maxBufferSize is very large (>100000), this may cause memory issues"
-  )), s.logLevel !== void 0 && (S.includes(s.logLevel) || e.push(`logLevel must be one of: ${S.join(", ")}`)), s.appVersion !== void 0 && typeof s.appVersion != "string" && e.push("appVersion must be a string"), s.pollingInterval !== void 0 && (typeof s.pollingInterval != "number" ? e.push("pollingInterval must be a number") : s.pollingInterval < 10 ? e.push("pollingInterval must be at least 10ms") : s.pollingInterval < 50 && t.push(
-    "pollingInterval is very low (<50ms), this may impact performance"
-  )), s.rateLimiting !== void 0)
-    if (typeof s.rateLimiting != "object" || s.rateLimiting === null)
-      e.push("rateLimiting must be an object");
-    else {
-      const i = s.rateLimiting;
-      i.enabled !== void 0 && typeof i.enabled != "boolean" && e.push("rateLimiting.enabled must be a boolean"), i.maxEventsPerSecond !== void 0 && (typeof i.maxEventsPerSecond != "number" ? e.push("rateLimiting.maxEventsPerSecond must be a number") : i.maxEventsPerSecond < 1 && e.push("rateLimiting.maxEventsPerSecond must be at least 1")), i.samplingRate !== void 0 && (typeof i.samplingRate != "number" ? e.push("rateLimiting.samplingRate must be a number") : (i.samplingRate < 0 || i.samplingRate > 1) && e.push("rateLimiting.samplingRate must be between 0 and 1"));
-    }
-  if (s.deduplication !== void 0)
-    if (typeof s.deduplication != "object" || s.deduplication === null)
-      e.push("deduplication must be an object");
-    else {
-      const i = s.deduplication;
-      if (i.enabled !== void 0 && typeof i.enabled != "boolean" && e.push("deduplication.enabled must be a boolean"), i.windowMs !== void 0 && (typeof i.windowMs != "number" ? e.push("deduplication.windowMs must be a number") : i.windowMs < 100 && e.push("deduplication.windowMs must be at least 100ms")), i.fields !== void 0)
-        if (!Array.isArray(i.fields))
-          e.push("deduplication.fields must be an array");
-        else {
-          const r = ["message", "scope", "level", "tags", "state"];
-          i.fields.forEach((n, o) => {
-            typeof n != "string" ? e.push(`deduplication.fields[${o}] must be a string`) : r.includes(n) || e.push(
-              `deduplication.fields[${o}] "${n}" is not a valid field. Valid fields: ${r.join(", ")}`
-            );
-          });
-        }
-    }
-  if (s.customLevels !== void 0)
-    if (!Array.isArray(s.customLevels))
-      e.push("customLevels must be an array");
-    else {
-      const i = /* @__PURE__ */ new Set(), r = ["log", "event"];
-      s.customLevels.forEach((n, o) => {
-        typeof n.name != "string" || n.name.trim() === "" ? e.push(`customLevels[${o}].name must be a non-empty string`) : (i.has(n.name) && e.push(
-          `customLevels[${o}].name "${n.name}" is a duplicate`
-        ), i.add(n.name), r.includes(n.name.toLowerCase()) && e.push(
-          `customLevels[${o}].name "${n.name}" is a reserved method name`
-        ), S.includes(n.name) && t.push(
-          `customLevels[${o}].name "${n.name}" shadows a built-in level`
-        )), typeof n.severity != "number" && e.push(`customLevels[${o}].severity must be a number`);
-      });
-    }
-  return {
-    valid: e.length === 0,
-    errors: e,
-    warnings: t
-  };
-}
-function Se(s) {
-  const e = D(s);
-  if (!e.valid)
-    throw new Error(
-      `Invalid Satori configuration:
-${e.errors.join(`
-`)}`
-    );
-}
-class Ce {
-  name = "memory";
-  store = [];
-  maxSize;
-  constructor(e = 1e4) {
-    this.maxSize = e;
-  }
-  async write(e) {
-    this.store.push(...e), this.store.length > this.maxSize && (this.store = this.store.slice(-this.maxSize));
-  }
-  async read(e) {
-    let t = [...this.store];
-    return e?.startTime && (t = t.filter((i) => i.timestamp >= e.startTime)), e?.endTime && (t = t.filter((i) => i.timestamp <= e.endTime)), e?.levels?.length && (t = t.filter((i) => e.levels.includes(i.level))), e?.scopes?.length && (t = t.filter((i) => e.scopes.includes(i.scope))), e?.offset && (t = t.slice(e.offset)), e?.limit && (t = t.slice(0, e.limit)), t;
-  }
-  async clear() {
-    this.store = [];
-  }
-  async close() {
-  }
-  getSize() {
-    return this.store.length;
-  }
-}
-class Ee {
-  name = "localStorage";
-  storageKey;
-  maxSize;
-  constructor(e = "satori_logs", t = 1e3) {
-    this.storageKey = e, this.maxSize = t;
-  }
-  async write(e) {
-    if (typeof localStorage > "u")
-      throw new Error("localStorage is not available in this environment");
-    const r = [...await this.read(), ...e].slice(-this.maxSize);
-    localStorage.setItem(this.storageKey, JSON.stringify(r));
-  }
-  async read(e) {
-    if (typeof localStorage > "u")
-      return [];
-    const t = localStorage.getItem(this.storageKey);
-    if (!t) return [];
-    let i;
-    try {
-      i = JSON.parse(t);
-    } catch {
-      return [];
-    }
-    return e?.startTime && (i = i.filter((r) => r.timestamp >= e.startTime)), e?.endTime && (i = i.filter((r) => r.timestamp <= e.endTime)), e?.levels?.length && (i = i.filter((r) => e.levels.includes(r.level))), e?.scopes?.length && (i = i.filter((r) => e.scopes.includes(r.scope))), e?.offset && (i = i.slice(e.offset)), e?.limit && (i = i.slice(0, e.limit)), i;
-  }
-  async clear() {
-    typeof localStorage < "u" && localStorage.removeItem(this.storageKey);
-  }
-  async close() {
-  }
-}
-class Te {
-  name = "indexedDB";
-  dbName;
-  storeName = "logs";
-  db = null;
-  maxSize;
-  constructor(e = "satori", t = 1e5) {
-    this.dbName = e, this.maxSize = t;
-  }
-  async getDB() {
-    return this.db ? this.db : new Promise((e, t) => {
-      if (typeof indexedDB > "u") {
-        t(new Error("IndexedDB is not available in this environment"));
-        return;
-      }
-      const i = indexedDB.open(this.dbName, 1);
-      i.onerror = () => t(i.error), i.onsuccess = () => {
-        this.db = i.result, e(this.db);
-      }, i.onupgradeneeded = () => {
-        const r = i.result;
-        if (!r.objectStoreNames.contains(this.storeName)) {
-          const n = r.createObjectStore(this.storeName, { keyPath: "id" });
-          n.createIndex("timestamp", "timestamp"), n.createIndex("level", "level"), n.createIndex("scope", "scope");
-        }
-      };
-    });
-  }
-  async write(e) {
-    const t = await this.getDB();
-    return new Promise((i, r) => {
-      const n = t.transaction(this.storeName, "readwrite"), o = n.objectStore(this.storeName);
-      for (const a of e)
-        o.put(a);
-      n.oncomplete = () => i(), n.onerror = () => r(n.error);
-    });
-  }
-  async read(e) {
-    const t = await this.getDB();
-    return new Promise((i, r) => {
-      const a = t.transaction(this.storeName, "readonly").objectStore(this.storeName).index("timestamp"), f = [], c = a.openCursor();
-      c.onsuccess = () => {
-        const l = c.result;
-        if (l) {
-          const u = l.value;
-          let d = !0;
-          e?.startTime && u.timestamp < e.startTime && (d = !1), e?.endTime && u.timestamp > e.endTime && (d = !1), e?.levels?.length && !e.levels.includes(u.level) && (d = !1), e?.scopes?.length && !e.scopes.includes(u.scope) && (d = !1), d && f.push(u), l.continue();
-        } else {
-          let u = f;
-          e?.offset && (u = u.slice(e.offset)), e?.limit && (u = u.slice(0, e.limit)), i(u);
-        }
-      }, c.onerror = () => r(c.error);
-    });
-  }
-  async clear() {
-    const e = await this.getDB();
-    return new Promise((t, i) => {
-      const o = e.transaction(this.storeName, "readwrite").objectStore(this.storeName).clear();
-      o.onsuccess = () => t(), o.onerror = () => i(o.error);
-    });
-  }
-  async close() {
-    this.db && (this.db.close(), this.db = null);
-  }
-}
-class Le {
-  name = "console";
-  inMemory = [];
-  async write(e) {
-    for (const t of e) {
-      const i = t.level;
-      (console[i === "debug" ? "log" : i] ?? console.log)(`[${t.scope}] ${t.message}`, t), this.inMemory.push(t);
-    }
-  }
-  async read() {
-    return [...this.inMemory];
-  }
-  async clear() {
-    this.inMemory = [];
-  }
-  async close() {
-  }
-}
-class J {
-  buffer = [];
-  flushTimer = null;
-  config;
-  constructor(e) {
-    this.config = e, e.enabled && e.flushInterval && this.startAutoFlush();
-  }
-  /**
-   * Add an entry to the persistence buffer
-   */
-  add(e) {
-    this.config.enabled && (this.buffer.push(e), this.config.batchSize && this.buffer.length >= this.config.batchSize && this.flush());
-  }
-  /**
-   * Flush the buffer to the adapter
-   */
-  async flush() {
-    if (this.buffer.length === 0) return;
-    const e = [...this.buffer];
-    this.buffer = [];
-    try {
-      await this.config.adapter.write(e);
-    } catch (t) {
-      throw this.buffer.length < 1e4 && (this.buffer = [...e, ...this.buffer]), t;
-    }
-  }
-  /**
-   * Start auto-flush timer
-   */
-  startAutoFlush() {
-    this.flushTimer || (this.flushTimer = setInterval(() => {
-      this.flush().catch(console.error);
-    }, this.config.flushInterval));
-  }
-  /**
-   * Stop auto-flush and close adapter
-   */
-  async close() {
-    this.flushTimer && (clearInterval(this.flushTimer), this.flushTimer = null), await this.flush(), await this.config.adapter.close?.();
-  }
-  /**
-   * Get buffer size
-   */
-  getBufferSize() {
-    return this.buffer.length;
-  }
-}
-function Ie(s = {}) {
-  const e = D(s);
-  if (!e.valid)
-    throw new Error(
-      `Invalid Satori configuration:
-${e.errors.join(`
-`)}`
-    );
-  e.warnings.length > 0 && console.warn("Satori configuration warnings:", e.warnings);
-  const t = {
-    ...y,
-    ...s,
-    // Merge nested configs properly
-    rateLimiting: { ...y.rateLimiting, ...s.rateLimiting },
-    deduplication: { ...y.deduplication, ...s.deduplication },
-    circuitBreaker: {
-      ...y.circuitBreaker,
-      ...s.circuitBreaker
-    }
-  }, i = new R({
-    maxBufferSize: t.maxBufferSize,
-    rateLimiting: t.rateLimiting,
-    deduplication: t.deduplication,
-    circuitBreaker: t.circuitBreaker,
-    enableMetrics: t.enableMetrics
-  });
-  !(typeof process < "u" && process.env?.NODE_ENV === "test") && t.enableConsole !== !1 && typeof console < "u" && i.subscribe((l) => {
-    const u = l.level;
-    (console[u === "debug" ? "log" : u] ?? console.log)(`[${l.scope}] ${l.message}`, l);
-  });
-  const n = new v("root", t, i), o = /* @__PURE__ */ new Map();
-  o.set("root", n);
-  let a = null;
-  t.persistence?.enabled && (a = new J(t.persistence), i.subscribe((l) => {
-    a?.add(l);
-  }));
-  const f = new C(), c = Date.now();
-  return {
-    config: t,
-    bus: i,
-    rootLogger: n,
-    createLogger(l) {
-      const u = new v(l, t, i);
-      return o.set(l, u), f.setLoggerCount(o.size), u;
-    },
-    getMetrics() {
-      let l = 0;
-      for (const u of o.values())
-        u.isDisposed() || (l += u.getWatcherCount());
-      return f.setWatcherCount(l), {
-        bus: i.getMetrics(),
-        loggerCount: o.size,
-        watcherCount: l,
-        circuitState: i.getCircuitBreaker().getState(),
-        uptime: Date.now() - c
-      };
-    },
-    async flush() {
-      a && await a.flush();
-    },
-    dispose() {
-      for (const u of o.values())
-        u.dispose();
-      o.clear();
-      const l = i.getReplayBuffer?.();
-      l && (l.length = 0), i.reset(), a && a.close().catch(console.error);
-    }
-  };
-}
-const Q = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3
+//#endregion
+//#region src/overlay/filters.ts
+var R = {
+	debug: 0,
+	info: 1,
+	warn: 2,
+	error: 3
 };
-function X(s, e, t) {
-  if (!e) return s;
-  const i = { ...Q };
-  if (t)
-    for (const n of t)
-      i[n.name] = n.severity;
-  const r = i[e] ?? 1;
-  return s.filter((n) => (i[n.level] ?? 1) >= r);
+function z(e, t, n) {
+	if (!t) return e;
+	let r = { ...R };
+	if (n) for (let e of n) r[e.name] = e.severity;
+	let i = r[t] ?? 1;
+	return e.filter((e) => (r[e.level] ?? 1) >= i);
 }
-function Y(s, e) {
-  return e.length === 0 ? s : s.filter((t) => e.includes(t.scope));
+function B(e, t) {
+	return t.length === 0 ? e : e.filter((e) => t.includes(e.scope));
 }
-function Z(s, e) {
-  const t = typeof e == "string" ? new RegExp(e) : e;
-  return s.filter((i) => t.test(i.scope));
+function V(e, t) {
+	let n = typeof t == "string" ? new RegExp(t) : t;
+	return e.filter((e) => n.test(e.scope));
 }
-function ee(s, e) {
-  return e.length === 0 ? s : s.filter((t) => e.some((i) => t.tags.includes(i)));
+function H(e, t) {
+	return t.length === 0 ? e : e.filter((e) => t.some((t) => e.tags.includes(t)));
 }
-function te(s, e) {
-  return e.length === 0 ? s : s.filter(
-    (t) => e.every((i) => t.tags.includes(i))
-  );
+function U(e, t) {
+	return t.length === 0 ? e : e.filter((e) => t.every((t) => e.tags.includes(t)));
 }
-function se(s, e) {
-  if (!e || e.trim() === "") return s;
-  const t = e.toLowerCase();
-  return s.filter(
-    (i) => i.message.toLowerCase().includes(t) || i.scope.toLowerCase().includes(t) || i.tags.some((r) => r.toLowerCase().includes(t))
-  );
+function W(e, t) {
+	if (!t || t.trim() === "") return e;
+	let n = t.toLowerCase();
+	return e.filter((e) => e.message.toLowerCase().includes(n) || e.scope.toLowerCase().includes(n) || e.tags.some((e) => e.toLowerCase().includes(n)));
 }
-function ie(s, e) {
-  const t = typeof e == "string" ? new RegExp(e, "i") : e;
-  return s.filter(
-    (i) => t.test(i.message) || t.test(i.scope) || i.tags.some((r) => t.test(r))
-  );
+function G(e, t) {
+	let n = typeof t == "string" ? new RegExp(t, "i") : t;
+	return e.filter((e) => n.test(e.message) || n.test(e.scope) || e.tags.some((e) => n.test(e)));
 }
-function re(s, e, t) {
-  return s.filter((i) => !(e && i.timestamp < e || t && i.timestamp > t));
+function K(e, t, n) {
+	return e.filter((e) => !(t && e.timestamp < t || n && e.timestamp > n));
 }
-function ne(s, e) {
-  const t = Date.now() - e;
-  return s.filter((i) => i.timestamp >= t);
+function q(e, t) {
+	let n = Date.now() - t;
+	return e.filter((e) => e.timestamp >= n);
 }
-function oe(s, e) {
-  return s.filter((t) => t.causeEventId === e);
+function J(e, t) {
+	return e.filter((e) => e.causeEventId === t);
 }
-function ae(s) {
-  return s.filter((e) => e.causeEventId !== void 0);
+function Y(e) {
+	return e.filter((e) => e.causeEventId !== void 0);
 }
-function ce(s, e) {
-  return s.filter((t) => e(t.state));
+function X(e, t) {
+	return e.filter((e) => t(e.state));
 }
-function le(s, e) {
-  return s.filter((t) => t.state && e in t.state);
+function Z(e, t) {
+	return e.filter((e) => e.state && t in e.state);
 }
-function ke(s, e, t) {
-  return s.filter((i) => i.state && i.state[e] === t);
+function ue(e, t, n) {
+	return e.filter((e) => e.state && e.state[t] === n);
 }
-function ue(s, e) {
-  let t = s;
-  "level" in e && e.level && (t = X(
-    t,
-    e.level,
-    e.customLevels
-  )), "scopes" in e && e.scopes && e.scopes.length > 0 && (t = Y(t, e.scopes)), "scopePattern" in e && e.scopePattern && (t = Z(
-    t,
-    e.scopePattern
-  )), "tags" in e && e.tags && e.tags.length > 0 && (t = ee(t, e.tags)), "allTags" in e && e.allTags && e.allTags.length > 0 && (t = te(t, e.allTags)), "text" in e && e.text && (t = se(t, e.text)), "regex" in e && e.regex && (t = ie(t, e.regex));
-  const i = e;
-  return (i.startTime || i.endTime) && (t = re(t, i.startTime, i.endTime)), i.relativeTime && (t = ne(t, i.relativeTime)), i.causeEventId && (t = oe(t, i.causeEventId)), i.hasCause && (t = ae(t)), i.stateKey && (t = le(t, i.stateKey)), i.statePredicate && (t = ce(t, i.statePredicate)), t;
+function Q(e, t) {
+	let n = e;
+	"level" in t && t.level && (n = z(n, t.level, t.customLevels)), "scopes" in t && t.scopes && t.scopes.length > 0 && (n = B(n, t.scopes)), "scopePattern" in t && t.scopePattern && (n = V(n, t.scopePattern)), "tags" in t && t.tags && t.tags.length > 0 && (n = H(n, t.tags)), "allTags" in t && t.allTags && t.allTags.length > 0 && (n = U(n, t.allTags)), "text" in t && t.text && (n = W(n, t.text)), "regex" in t && t.regex && (n = G(n, t.regex));
+	let r = t;
+	return (r.startTime || r.endTime) && (n = K(n, r.startTime, r.endTime)), r.relativeTime && (n = q(n, r.relativeTime)), r.causeEventId && (n = J(n, r.causeEventId)), r.hasCause && (n = Y(n)), r.stateKey && (n = Z(n, r.stateKey)), r.statePredicate && (n = X(n, r.statePredicate)), n;
 }
-function Be(s, e) {
-  const t = /* @__PURE__ */ new Map();
-  for (const i of s) {
-    const r = i[e], n = t.get(r) || [];
-    n.push(i), t.set(r, n);
-  }
-  return t;
+function de(e, t) {
+	let n = /* @__PURE__ */ new Map();
+	for (let r of e) {
+		let e = r[t], i = n.get(e) || [];
+		i.push(r), n.set(e, i);
+	}
+	return n;
 }
-function xe(s, e) {
-  const t = /* @__PURE__ */ new Map();
-  if (s.length === 0)
-    return t;
-  const i = Math.min(...s.map((r) => r.timestamp));
-  for (const r of s) {
-    const n = Math.floor((r.timestamp - i) / e) * e + i, o = t.get(n) || [];
-    o.push(r), t.set(n, o);
-  }
-  return t;
+function fe(e, t) {
+	let n = /* @__PURE__ */ new Map();
+	if (e.length === 0) return n;
+	let r = Math.min(...e.map((e) => e.timestamp));
+	for (let i of e) {
+		let e = Math.floor((i.timestamp - r) / t) * t + r, a = n.get(e) || [];
+		a.push(i), n.set(e, a);
+	}
+	return n;
 }
-function De(s) {
-  const e = {};
-  for (const t of s)
-    e[t.level] = (e[t.level] || 0) + 1;
-  return e;
+function pe(e) {
+	let t = {};
+	for (let n of e) t[n.level] = (t[n.level] || 0) + 1;
+	return t;
 }
-function $e(s) {
-  const e = {};
-  for (const t of s)
-    e[t.scope] = (e[t.scope] || 0) + 1;
-  return e;
+function me(e) {
+	let t = {};
+	for (let n of e) t[n.scope] = (t[n.scope] || 0) + 1;
+	return t;
 }
-class fe {
-  events = [];
-  selectedEventId;
-  filters = {
-    level: void 0,
-    scopes: [],
-    tags: [],
-    text: void 0
-  };
-  addEvent(e) {
-    this.events.push(e);
-  }
-  getAllEvents() {
-    return [...this.events];
-  }
-  getFilteredEvents() {
-    return ue(this.events, this.filters);
-  }
-  selectEvent(e) {
-    this.selectedEventId = e;
-  }
-  getSelectedEventId() {
-    return this.selectedEventId;
-  }
-  getSelectedEvent() {
-    if (this.selectedEventId)
-      return this.events.find((e) => e.id === this.selectedEventId);
-  }
-  getEventById(e) {
-    return this.events.find((t) => t.id === e);
-  }
-  setLevelFilter(e) {
-    this.filters.level = e;
-  }
-  getLevelFilter() {
-    return this.filters.level;
-  }
-  setScopeFilter(e) {
-    this.filters.scopes = [...e];
-  }
-  getScopeFilter() {
-    return [...this.filters.scopes];
-  }
-  setTagFilter(e) {
-    this.filters.tags = [...e];
-  }
-  getTagFilter() {
-    return [...this.filters.tags];
-  }
-  setTextFilter(e) {
-    this.filters.text = e;
-  }
-  getTextFilter() {
-    return this.filters.text;
-  }
-  clear() {
-    this.events.length = 0, this.selectedEventId = void 0, this.filters = {
-      level: void 0,
-      scopes: [],
-      tags: [],
-      text: void 0
-    };
-  }
-}
-class Me {
-  constructor(e) {
-    this.eventBus = e, this.subscribe();
-  }
-  state = new fe();
-  unsubscribe;
-  subscribe() {
-    this.unsubscribe = this.eventBus.subscribe((e) => {
-      this.state.addEvent(e);
-    });
-  }
-  getFilteredEvents() {
-    return this.state.getFilteredEvents();
-  }
-  setLevelFilter(e) {
-    this.state.setLevelFilter(e);
-  }
-  setScopeFilter(e) {
-    this.state.setScopeFilter(e);
-  }
-  setTagFilter(e) {
-    this.state.setTagFilter(e);
-  }
-  setTextFilter(e) {
-    this.state.setTextFilter(e);
-  }
-  selectEvent(e) {
-    this.state.selectEvent(e);
-  }
-  getSelectedEvent() {
-    return this.state.getSelectedEvent();
-  }
-  getEventById(e) {
-    return this.state.getEventById(e);
-  }
-  clearEvents() {
-    this.state.clear();
-  }
-  dispose() {
-    this.unsubscribe && (this.unsubscribe(), this.unsubscribe = void 0), this.state.clear();
-  }
-  getState() {
-    return {
-      events: this.state.getAllEvents(),
-      filteredEvents: this.state.getFilteredEvents(),
-      selectedEventId: this.state.getSelectedEventId(),
-      selectedEvent: this.state.getSelectedEvent(),
-      filters: {
-        level: this.state.getLevelFilter(),
-        scopes: this.state.getScopeFilter(),
-        tags: this.state.getTagFilter(),
-        text: this.state.getTextFilter()
-      }
-    };
-  }
-}
-function Fe(s) {
-  const e = {
-    debug: 0,
-    info: 1,
-    warn: 2,
-    error: 3
-  }, t = e[s];
-  return (i, r) => {
-    (e[i.level] ?? 0) >= t && r();
-  };
-}
-function Re(s) {
-  return (e, t) => {
-    (s.length === 0 || e.tags.some((i) => s.includes(i))) && t();
-  };
-}
-function Ae(s) {
-  return (e, t) => {
-    (s.length === 0 || s.includes(e.scope)) && t();
-  };
-}
-function Ne(s) {
-  const e = s.toLowerCase();
-  return (t, i) => {
-    (e === "" || t.message.toLowerCase().includes(e) || t.scope.toLowerCase().includes(e) || t.tags.some((r) => r.toLowerCase().includes(e))) && i();
-  };
-}
-export {
-  I as CircuitBreaker,
-  L as CircuitOpenError,
-  Le as ConsoleAdapter,
-  E as DEFAULT_CIRCUIT_BREAKER_CONFIG,
-  y as DEFAULT_CONFIG,
-  B as DEFAULT_DEDUP_CONFIG,
-  k as DEFAULT_RATE_LIMIT_CONFIG,
-  F as Deduplicator,
-  Te as IndexedDBAdapter,
-  Ee as LocalStorageAdapter,
-  Ce as MemoryAdapter,
-  C as MetricsCollector,
-  Me as OverlayBridge,
-  fe as OverlayState,
-  J as PersistenceManager,
-  M as RateLimiter,
-  v as ScopedLogger,
-  R as SimpleEventBus,
-  U as WatcherEngine,
-  xe as aggregateByTime,
-  ue as applyAllFilters,
-  Se as assertValidConfig,
-  _ as captureStateSnapshot,
-  we as causalGraph,
-  ve as clearCausalLinks,
-  b as computeHash,
-  De as countByLevel,
-  $e as countByScope,
-  Fe as createLevelFilter,
-  Ie as createSatori,
-  Ae as createScopeFilter,
-  me as createStateSelector,
-  Re as createTagFilter,
-  Ne as createTextFilter,
-  p as deepClone,
-  g as deepEqual,
-  P as detectPlatform,
-  be as diffSnapshots,
-  j as extractCallsite,
-  te as filterByAllTags,
-  oe as filterByCause,
-  ae as filterByHasCause,
-  X as filterByLevel,
-  ie as filterByRegex,
-  ne as filterByRelativeTime,
-  Z as filterByScopePattern,
-  Y as filterByScopes,
-  ce as filterByState,
-  le as filterByStateKey,
-  ke as filterByStateValue,
-  ee as filterByTags,
-  se as filterByText,
-  re as filterByTimeRange,
-  pe as formatTimestamp,
-  O as generateId,
-  ye as getCausalGraph,
-  K as getCausalLink,
-  V as getEnvInfo,
-  he as getGlobalMetrics,
-  Be as groupBy,
-  ge as mergeSnapshots,
-  z as now,
-  de as resetGlobalMetrics,
-  H as updateCausalLink,
-  D as validateConfig
+//#endregion
+//#region src/overlay/state.ts
+var $ = class {
+	events = [];
+	selectedEventId;
+	filters = {
+		level: void 0,
+		scopes: [],
+		tags: [],
+		text: void 0
+	};
+	addEvent(e) {
+		this.events.push(e);
+	}
+	getAllEvents() {
+		return [...this.events];
+	}
+	getFilteredEvents() {
+		return Q(this.events, this.filters);
+	}
+	selectEvent(e) {
+		this.selectedEventId = e;
+	}
+	getSelectedEventId() {
+		return this.selectedEventId;
+	}
+	getSelectedEvent() {
+		if (this.selectedEventId) return this.events.find((e) => e.id === this.selectedEventId);
+	}
+	getEventById(e) {
+		return this.events.find((t) => t.id === e);
+	}
+	setLevelFilter(e) {
+		this.filters.level = e;
+	}
+	getLevelFilter() {
+		return this.filters.level;
+	}
+	setScopeFilter(e) {
+		this.filters.scopes = [...e];
+	}
+	getScopeFilter() {
+		return [...this.filters.scopes];
+	}
+	setTagFilter(e) {
+		this.filters.tags = [...e];
+	}
+	getTagFilter() {
+		return [...this.filters.tags];
+	}
+	setTextFilter(e) {
+		this.filters.text = e;
+	}
+	getTextFilter() {
+		return this.filters.text;
+	}
+	clear() {
+		this.events.length = 0, this.selectedEventId = void 0, this.filters = {
+			level: void 0,
+			scopes: [],
+			tags: [],
+			text: void 0
+		};
+	}
+}, he = class {
+	eventBus;
+	state = new $();
+	unsubscribe;
+	constructor(e) {
+		this.eventBus = e, this.subscribe();
+	}
+	subscribe() {
+		this.unsubscribe = this.eventBus.subscribe((e) => {
+			this.state.addEvent(e);
+		});
+	}
+	getFilteredEvents() {
+		return this.state.getFilteredEvents();
+	}
+	setLevelFilter(e) {
+		this.state.setLevelFilter(e);
+	}
+	setScopeFilter(e) {
+		this.state.setScopeFilter(e);
+	}
+	setTagFilter(e) {
+		this.state.setTagFilter(e);
+	}
+	setTextFilter(e) {
+		this.state.setTextFilter(e);
+	}
+	selectEvent(e) {
+		this.state.selectEvent(e);
+	}
+	getSelectedEvent() {
+		return this.state.getSelectedEvent();
+	}
+	getEventById(e) {
+		return this.state.getEventById(e);
+	}
+	clearEvents() {
+		this.state.clear();
+	}
+	dispose() {
+		this.unsubscribe &&= (this.unsubscribe(), void 0), this.state.clear();
+	}
+	getState() {
+		return {
+			events: this.state.getAllEvents(),
+			filteredEvents: this.state.getFilteredEvents(),
+			selectedEventId: this.state.getSelectedEventId(),
+			selectedEvent: this.state.getSelectedEvent(),
+			filters: {
+				level: this.state.getLevelFilter(),
+				scopes: this.state.getScopeFilter(),
+				tags: this.state.getTagFilter(),
+				text: this.state.getTextFilter()
+			}
+		};
+	}
 };
+//#endregion
+//#region src/bus/middleware.ts
+function ge(e) {
+	let t = {
+		debug: 0,
+		info: 1,
+		warn: 2,
+		error: 3
+	}, n = t[e];
+	return (e, r) => {
+		(t[e.level] ?? 0) >= n && r();
+	};
+}
+function _e(e) {
+	return (t, n) => {
+		(e.length === 0 || t.tags.some((t) => e.includes(t))) && n();
+	};
+}
+function ve(e) {
+	return (t, n) => {
+		(e.length === 0 || e.includes(t.scope)) && n();
+	};
+}
+function ye(e) {
+	let t = e.toLowerCase();
+	return (e, n) => {
+		(t === "" || e.message.toLowerCase().includes(t) || e.scope.toLowerCase().includes(t) || e.tags.some((e) => e.toLowerCase().includes(t))) && n();
+	};
+}
+//#endregion
+export { a as CircuitBreaker, o as CircuitOpenError, le as ConsoleAdapter, f as DEFAULT_CIRCUIT_BREAKER_CONFIG, p as DEFAULT_CONFIG, d as DEFAULT_DEDUP_CONFIG, u as DEFAULT_RATE_LIMIT_CONFIG, i as Deduplicator, ce as IndexedDBAdapter, se as LocalStorageAdapter, oe as MemoryAdapter, s as MetricsCollector, he as OverlayBridge, $ as OverlayState, I as PersistenceManager, e as RateLimiter, N as ScopedLogger, m as SimpleEventBus, M as WatcherEngine, fe as aggregateByTime, Q as applyAllFilters, ae as assertValidConfig, x as captureStateSnapshot, A as causalGraph, O as clearCausalLinks, r as computeHash, pe as countByLevel, me as countByScope, ge as createLevelFilter, L as createSatori, ve as createScopeFilter, re as createStateSelector, _e as createTagFilter, ye as createTextFilter, n as deepClone, t as deepEqual, y as detectPlatform, C as diffSnapshots, v as extractCallsite, U as filterByAllTags, J as filterByCause, Y as filterByHasCause, z as filterByLevel, G as filterByRegex, q as filterByRelativeTime, V as filterByScopePattern, B as filterByScopes, X as filterByState, Z as filterByStateKey, ue as filterByStateValue, H as filterByTags, W as filterByText, K as filterByTimeRange, _ as formatTimestamp, h as generateId, k as getCausalGraph, E as getCausalLink, b as getEnvInfo, l as getGlobalMetrics, de as groupBy, S as mergeSnapshots, g as now, ee as resetGlobalMetrics, D as updateCausalLink, F as validateConfig };
+
 //# sourceMappingURL=satori.mjs.map
