@@ -9,62 +9,62 @@
   "batchCount": 1,
   "files": {
     "api/core.md": {
-      "mtime": 1781904733882.7314,
+      "mtime": 1783160960655.7776,
       "size": 6510,
       "batches": []
     },
     "api/filters.md": {
-      "mtime": 1781904733882.8364,
+      "mtime": 1783160960655.8816,
       "size": 3712,
       "batches": []
     },
     "api/index.md": {
-      "mtime": 1781904733882.8364,
+      "mtime": 1783160960655.8816,
       "size": 850,
       "batches": []
     },
     "getting-started/configuration.md": {
-      "mtime": 1781904733882.8364,
+      "mtime": 1783160960655.8816,
       "size": 5347,
       "batches": []
     },
     "getting-started/quickstart.md": {
-      "mtime": 1781904733883.0098,
+      "mtime": 1783160960656.0417,
       "size": 2794,
       "batches": []
     },
     "guide/advanced.md": {
-      "mtime": 1781904733883.0098,
+      "mtime": 1783160960656.0417,
       "size": 5504,
       "batches": []
     },
     "guide/causal.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 4091,
       "batches": []
     },
     "guide/examples.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 13848,
       "batches": []
     },
     "guide/filtering.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 4872,
       "batches": []
     },
     "guide/index.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 1482,
       "batches": []
     },
     "guide/watching.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 4100,
       "batches": []
     },
     "index.md": {
-      "mtime": 1781904733883.1477,
+      "mtime": 1783160960656.1687,
       "size": 1916,
       "batches": []
     }
