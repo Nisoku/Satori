@@ -118,7 +118,14 @@ export function deepEqual(
 
     for (const key of aKeys) {
       if (!Object.prototype.hasOwnProperty.call(b, key)) return false;
-      if (!deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key], seen)) return false;
+      if (
+        !deepEqual(
+          (a as unknown as Record<string, unknown>)[key],
+          (b as unknown as Record<string, unknown>)[key],
+          seen,
+        )
+      )
+        return false;
     }
 
     return true;
@@ -208,7 +215,10 @@ export function deepClone<T>(
     // Copy non-index properties
     for (const key of Object.keys(value)) {
       if (!/^\d+$/.test(key)) {
-        (cloned as Record<string, unknown>)[key] = deepClone((value as Record<string, unknown>)[key], seen);
+        (cloned as unknown as Record<string, unknown>)[key] = deepClone(
+          (value as unknown as Record<string, unknown>)[key],
+          seen,
+        );
       }
     }
 
