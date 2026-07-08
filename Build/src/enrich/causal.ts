@@ -226,7 +226,7 @@ const globalCausalGraph = new CausalGraph();
 
 // Legacy API for backwards compatibility
 const scopeLastEvent = new Map<string, string>();
-let globalLastEvent: string | undefined;
+let _globalLastEvent: string | undefined;
 
 export function getCausalLink(
   scope: string,
@@ -244,13 +244,13 @@ export function updateCausalLink(
 
   // Also maintain legacy maps for compatibility
   scopeLastEvent.set(scope, eventId);
-  globalLastEvent = eventId;
+  _globalLastEvent = eventId;
 }
 
 export function clearCausalLinks(): void {
   globalCausalGraph.clear();
   scopeLastEvent.clear();
-  globalLastEvent = undefined;
+  _globalLastEvent = undefined;
 }
 
 // Export the graph for advanced usage

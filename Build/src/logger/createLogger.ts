@@ -9,7 +9,6 @@ import type {
   WhenPredicate,
   WhenCallback,
   WatchHandle,
-  CustomLogLevel,
 } from "../core/types.js";
 import { enrichEvent } from "../enrich/enrichEvent.js";
 import { updateCausalLink } from "../enrich/causal.js";
