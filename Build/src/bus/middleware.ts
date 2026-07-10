@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel, Middleware } from "../core/types.js";
+import type { LogLevel, Middleware } from "../core/types.js";
 
 export function createLevelFilter(minLevel: LogLevel): Middleware {
   const levels: Record<string, number> = {

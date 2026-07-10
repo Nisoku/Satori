@@ -7,7 +7,7 @@ import type {
 import { SimpleEventBus } from "../bus/eventBus.js";
 import { ScopedLogger } from "./createLogger.js";
 import { DEFAULT_CONFIG } from "../core/config.js";
-import { validateConfig, assertValidConfig } from "../core/validation.js";
+import { validateConfig } from "../core/validation.js";
 import { PersistenceManager } from "../persistence/adapters.js";
 import { MetricsCollector } from "../core/metrics.js";
 

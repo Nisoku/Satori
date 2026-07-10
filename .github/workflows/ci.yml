@@ -36,6 +36,10 @@ jobs:
         working-directory: Build
         run: npm run typecheck
 
+      - name: Lint
+        working-directory: Build
+        run: npm run lint
+
       - name: Run tests
         working-directory: Build
         run: npm test

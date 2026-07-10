@@ -122,7 +122,7 @@ export class SimpleEventBus implements EventBus {
         this.metrics.setBufferSize(this.buffer.length);
         this.metrics.setSubscriberCount(this.subscribers.length);
       }
-    } catch (error) {
+    } catch {
       // Circuit is open or publish failed
       if (this.enableMetrics) {
         this.metrics.recordDropped();

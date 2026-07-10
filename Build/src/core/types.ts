@@ -25,8 +25,7 @@ export interface SatoriLogger {
 }
 
 export type WatchSource<T> =
-  | (() => T)
-  | (T & { readonly __brand: unique symbol });
+  (() => T) | (T & { readonly __brand: unique symbol });
 export type WhenPredicate<T> = (prev: T | undefined, next: T) => boolean;
 export type WhenCallback<T> = (value: T, prev: T | undefined) => void;
 
